@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab mới</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="./image/traveller.png">
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="bg-img">
+        <div class="image"></div>
+        <div class="loader"></div>
+        <div class="content">
+            <div class="date-info">
+                <p class="clock">--</p>
+                <p class="date"><span id="calendar">--</span><br><span id="lunar-calendar">--</span></p>
+            </div>
+            <div class="weather-info">
+                <div class="icon-container">
+                    <div class="icon"></div>
+                    <p class="temp">--</p>
+                </div>
+                <p class="weather">--</p>
+            </div>
+            <div class="search">
+                <input type="text" id="search" autocomplete="off" name="search" placeholder="Tìm kiếm [Bấm phím bất kỳ]">
+                <button id="clear"><img src="./image/close.png" alt=""></button>
+            </div>
+        </div>
+        <div class="safemode-box">
+            <p>Safemode enabled</p>
+        </div>
+    </div>
+    <button class="opt-btn">
+        <img class="opt-btn-img" src="./image/setting.png" alt="settings">
+    </button>
+    <div class="settings">
+        <!-- Error -->
+        <div class="error-display setting-tabs">
+            <div class="tab-title">Lỗi</div>
+            <div class="tab-content">
+                <p id="error-text"></p>
+            </div>
+        </div>
+
+        <!-- new tab -->
+        <div class="new-tab setting-tabs">
+            <div class="tab-title">Tiêu đề Tab</div>
+            <div class="tab-content">
+                <input type="text" id="new-tab-title" placeholder="Enter để lưu">
+            </div>
+        </div>
+
+        <div class="API-handle setting-tabs">
+            <div class="tab-title">Hình nền</div>
+            <div class="tab-content">
+                <img class="preview-image" draggable="false">
+                <hr style="padding: 0;margin: 5px 0;border:1px solid rgba(255, 255, 255, 0.3);">
+                </hr>
+                <div class="select-API">
+                    <button class="choose-API">
+                        <p class="API-name">Chọn nguồn ảnh</p>
+                        <img src="./image/down.png" alt="down"> 
+                    </button>
+                    <div class="API-select-box">
+                        <button class="API-option" id="api_none">Không có</button>
+                        <button class="API-option" id="api_picrew">Anime Wallpapers</button>
+                    </div>
+                </div>
+                <hr style="padding: 0;margin: 5px 0;border:1px solid rgba(255, 255, 255, 0.3);">
+                </hr>
+                <div class="picre">
+                    <button id="picre-changewall">Đổi hình nền</button>
+                    <button id="picre-pixiv">Xem hình trên Pixiv</button>
+                    <button id="picre-download">Tải hình nền</button>
+                </div>
+            </div>
+        </div>
+        <div class="bg-settings setting-tabs">
+            <div class="tab-title">Cài đặt hình nền</div>
+            <div class="tab-content">
+                <!-- Brightness -->
+                <label for="opacity-slider">Độ sáng: <span id="opacity-value">100%</span></label>
+                <input type="range" id="opacity-slider" min="20" max="100" value="100">
+                <!-- Blur -->
+                <label for="blur-slider">Độ mờ: <span id="blur-value">0%</span></label>
+                <input type="range" id="blur-slider" min="0" max="20" value="0">
+                <!-- Bg position -->
+                <label for="bgpos-slider">Căn chỉnh Y: <span id="bgpos-value">0%</span></label>
+                <input type="range" id="bgpos-slider" min="0" max="100" value="50">
+                <button id="bgpos-center">Căn giữa</button>
+                <!-- Fullscreen -->
+                <div class="checkbox">
+                    <input type="checkbox" class="checksvg" id="fullview" style="display: none;">
+                    <label for="fullview" class="check">
+                        <p style="padding: 0;margin: 0;">Full view</p>
+                        <svg width="18px" height="18px" viewBox="0 0 18 18">
+                            <path
+                                d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z">
+                            </path>
+                            <polyline points="1 9 7 14 15 4"></polyline>
+                        </svg>
+                    </label>
+                </div>
+                <!-- Censored -->
+                <div class="checkbox">
+                    <input type="checkbox" class="checksvg" id="safemode" style="display: none;">
+                    <label for="safemode" class="check">
+                        <p style="padding: 0;margin: 0;">Safe mode <span style="opacity: 0.5; font-size: 0.8em;">Ctrl +
+                                X</span></p>
+                        <svg width="18px" height="18px" viewBox="0 0 18 18">
+                            <path
+                                d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z">
+                            </path>
+                            <polyline points="1 9 7 14 15 4"></polyline>
+                        </svg>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-tabs">
+            <div class="tab-title">Debug</div>
+            <div class="tab-content">
+                <button class="del-local">Đặt lại</button>
+                <div class="del-confirm">
+                    <p style="padding: 0;margin: 0;text-align: center;">Are you sure about that?</p>
+                    <button class="del-yes">Yes</button>
+                    <button class="del-no">No</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="info setting-tabs">
+            <div class="tab-title">Info</div>
+            <div class="tab-content">
+                <p>Ctrl + Z để mở menu</p>
+                <p>Wibi New Tab <span style="font-size: 0.7em;">v1.0</span></p>
+                <p>By @Natelyt</p>
+                <p style="font-size: 0.8em;">All the API used in this project: <br>
+                    Anime Walls: <a href="https://pic.re">Pic.re</a><br>
+                    Weather: <a href="https://openweathermap.org">OpenWeatherMap</a><br>
+                    Âm lịch: <a href="https://open.oapi.vn/date/convert-to-lunar">Âm lịch</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="script.js"></script>
+
+</html>
