@@ -10,7 +10,6 @@ const bgposSlider = document.getElementById('bgpos-slider');
 const API_select_box = document.querySelector('.API-select-box');
 const choose_API = document.querySelector('.choose-API');
 const previewImage = document.querySelector('.preview-image');
-const ngu = atob("OTFiOTgzODdmNzEyZWRhZTA3MWMyN2JhYjMzZjVkYWM=")
 const date = document.getElementById('calendar');
 const lunar = document.getElementById('lunar-calendar');
 const clock = document.querySelector('.clock'); 
@@ -93,9 +92,14 @@ fetch('https://open.oapi.vn/date/convert-to-lunar', {
     .catch(error => console.error(error))
 
 
+const sukcak = 'jMzZjVkYWM='
+const aduvjp = 'OTFiOTgzOD'
+const bulon = 'TA3MWMyN2Jh'
+const mmb = 'dmNzEyZWRhZ'
 const weathericon = document.querySelector('.icon')
 const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
+const ngu = atob(aduvjp + mmb + bulon + sukcak)
 fetch(`https://api.openweathermap.org/data/2.5/weather?q=${'Ha long'}&appid=${ngu}&units=metric&lang=vi`)
 
     .then(response => response.json())
