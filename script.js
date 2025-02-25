@@ -92,14 +92,10 @@ fetch('https://open.oapi.vn/date/convert-to-lunar', {
     .catch(error => console.error(error))
 
 
-const sukcak = 'jMzZjVkYWM='
-const aduvjp = 'OTFiOTgzOD'
-const bulon = 'TA3MWMyN2Jh'
-const mmb = 'dmNzEyZWRhZ'
 const weathericon = document.querySelector('.icon')
 const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
-const ngu = atob(aduvjp + mmb + bulon + sukcak)
+const ngu = atob("OTFiOTgzODdmNzEyZWRhZTA3MWMyN2JhYjMzZjVkYWM=")
 fetch(`https://api.openweathermap.org/data/2.5/weather?q=${'Ha long'}&appid=${ngu}&units=metric&lang=vi`)
 
     .then(response => response.json())
