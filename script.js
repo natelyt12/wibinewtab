@@ -124,6 +124,7 @@ function z() {
     document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Bấm phím bất kỳ]';
     clearsearch.style.display = 'none'
     searchbox.blur()
+    searchbox.value = ''
 }
 
 const searchbox = document.getElementById('search')

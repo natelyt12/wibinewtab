@@ -525,7 +525,7 @@ span {
 
 @keyframes slidein2 {
     from {
-        transform: translateX(-300px);
+        transform: translateX(-110%);
     }
 
     to {
