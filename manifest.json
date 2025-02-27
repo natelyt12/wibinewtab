@@ -6,9 +6,5 @@
     "author": "Natelyt",
     "chrome_url_overrides": {
         "newtab": "index.html"
-    },
-    "icons": {
-        "128": "images/traveller.png",
-        "512": "images/traveller.png"
     }
 }
