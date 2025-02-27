@@ -21,7 +21,11 @@
 <body>
     <div class="bg-img">
         <div class="image"></div>
-        <div class="loader"></div>
+        <div class="loader">
+            <svg viewBox="25 25 50 50" class="circular">
+                <circle stroke-miterlimit="10" stroke-width="3" fill="none" r="20" cy="50" cx="50" class="path"></circle>
+            </svg>
+        </div>
         <div class="content">
             <div class="date-info">
                 <p class="clock">--</p>
@@ -35,13 +39,12 @@
                 <p class="weather">--</p>
             </div>
             <div class="search">
-                <input type="text" id="search" autocomplete="off" name="search"
-                    placeholder="Tìm kiếm [Bấm phím bất kỳ]">
+                <input type="text" id="search" autocomplete="off" name="search" placeholder="Tìm kiếm [Nhập bất kỳ]">
                 <button id="clear"><img src="./image/close.png" alt=""></button>
             </div>
         </div>
         <div class="safemode-box">
-            <p>Safemode enabled</p>
+            <p>Safe mode đã bật để che hình nền của bạn</p>
         </div>
     </div>
     <button class="opt-btn">
@@ -95,9 +98,6 @@
                 <!-- Brightness -->
                 <label for="opacity-slider">Độ sáng: <span id="opacity-value">100%</span></label>
                 <input type="range" id="opacity-slider" min="20" max="100" value="100">
-                <!-- Blur -->
-                <label for="blur-slider">Độ mờ: <span id="blur-value">0%</span></label>
-                <input type="range" id="blur-slider" min="0" max="20" value="0">
                 <!-- Bg position -->
                 <label for="bgpos-slider">Căn chỉnh Y: <span id="bgpos-value">0%</span></label>
                 <input type="range" id="bgpos-slider" min="0" max="100" value="50">
@@ -133,7 +133,7 @@
         </div>
 
         <div class="setting-tabs">
-            <div class="tab-title">Debug</div>
+            <div class="tab-title">Khác</div>
             <div class="tab-content">
                 <button class="del-local">Đặt lại</button>
                 <div class="del-confirm">
@@ -147,9 +147,12 @@
         <div class="info setting-tabs">
             <div class="tab-title">Info</div>
             <div class="tab-content">
-                <p>Ctrl + Z để mở menu</p>
-                <p>Wibi New Tab <span style="font-size: 0.7em;">v1.0</span></p>
+                <p style="font-size: 1.2em;">Wibi New Tab <span style="font-size: 0.7em;">v1.1.0</span></p>
                 <p>By @Natelyt</p>
+                <hr>
+                <p>Ctrl + Z để mở/đóng menu</p>
+                <p>Hãy để thu phóng trang 90% hoặc 80% để có một cái nhìn tốt hơn</p>
+                <hr>
                 <p style="font-size: 0.8em;">All the API used in this project: <br>
                     Anime Walls: <a href="https://pic.re">Pic.re</a><br>
                     Weather: <a href="https://openweathermap.org">OpenWeatherMap</a><br>
@@ -160,4 +163,5 @@
     </div>
 </body>
 <script src="script.js"></script>
+
 </html>

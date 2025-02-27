@@ -5,7 +5,6 @@ const setting = document.querySelector('.settings');
 const image = document.querySelector('.image');
 const settingBtn = document.querySelector('.opt-btn');
 const opacitySlider = document.getElementById('opacity-slider');
-const blurSlider = document.getElementById('blur-slider');
 const bgposSlider = document.getElementById('bgpos-slider');
 const API_select_box = document.querySelector('.API-select-box');
 const choose_API = document.querySelector('.choose-API');
@@ -13,26 +12,18 @@ const previewImage = document.querySelector('.preview-image');
 const date = document.getElementById('calendar');
 const lunar = document.getElementById('lunar-calendar');
 const clock = document.querySelector('.clock'); 
+const bgopt = document.querySelector('.bg-settings');
 
 const bgposCenter = document.getElementById('bgpos-center');
 const safemode = document.getElementById('safemode');
 // settings
 const fullview = document.getElementById('fullview');
+let settingstate = false;
 // API
 const API_name = document.querySelector('.API-name');
 const api_none = document.getElementById('api_none');
 const api_picrew = document.getElementById('api_picrew');
-
 const picre_box = document.querySelector('.picre')
-
-// // Default settings
-// const DefaultSettings = {
-//     API: 'none',
-//     opacity: 100,
-//     blur: 0,
-//     bgpos: 50,
-//     fullview: false
-// }
 
 // Error handler
 const errorDisplay = document.querySelector('.error-display');
@@ -110,6 +101,11 @@ document.addEventListener('click', (event) => {
     if (!searchcontainer.contains(event.target) && !searchbox.contains(event.target)) {
         z()
     }
+    if (!setting.contains(event.target) && !settingBtn.contains(event.target)) {
+        setting.classList.remove('active');
+        settingBtn.classList.remove('active2');
+        settingstate = false;
+    }
 });
 
 document.addEventListener('keydown', (event) => {
@@ -119,12 +115,12 @@ document.addEventListener('keydown', (event) => {
 })
 
 function z() {
-    searchcontainer.classList.remove('searching');
     searchbox.style.width = '220px';
-    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Bấm phím bất kỳ]';
+    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Nhập bất kỳ]';
     clearsearch.style.display = 'none'
     searchbox.blur()
     searchbox.value = ''
+    searchbox.style.fontSize = '0.8em'
 }
 
 const searchbox = document.getElementById('search')
@@ -132,10 +128,11 @@ const searchcontainer = document.querySelector('.search')
 const clearsearch = document.getElementById('clear')
 searchbox.addEventListener('keypress', () => {
     if (searchbox.value.length >= 0) {
-        searchcontainer.classList.add('searching')
         searchbox.style.width = '500px'
+        searchbox.style.transition = '0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000)'
         clearsearch.style.display = 'block'
         document.getElementsByName('search')[0].placeholder = 'Tìm kiếm'
+        searchbox.style.fontSize = '1.2em'
     }
     if (event.key === 'Enter') {
         window.open(`https://www.google.com/search?q=${searchbox.value}`, "_self")
@@ -152,17 +149,25 @@ document.addEventListener('keydown', (event) => {
     if (event.ctrlKey && event.key === 'z') {
         setting.classList.toggle('active');
         settingBtn.classList.toggle('active2');
+        settingstate = !settingstate;
     } else if (event.ctrlKey && event.key === 'x') {
         safemode.checked = !safemode.checked;
         safemode.dispatchEvent(new Event('click'));
     } else if (event.key.length === 1 && !event.ctrlKey) {
-        searchbox.focus();
+        if (settingstate == false) {
+            searchbox.focus();
+        }
+    } else if (event.key === 'Escape') {
+        setting.classList.remove('active');
+        settingBtn.classList.remove('active2');
+        settingstate = false;
     }
 });
 
 settingBtn.addEventListener('click', () => {
     setting.classList.toggle('active');
     settingBtn.classList.toggle('active2');
+    settingstate = !settingstate;
 });
 
 // document.addEventListener('click', (event) => {
@@ -184,23 +189,16 @@ tabtitle.addEventListener('change', () => {
 });
 
 // Slider handler
+const opacityText = document.getElementById('opacity-value');
 opacitySlider.addEventListener('input', (event) => {
     const opacityValue = event.target.value;
-    const opacityText = document.getElementById('opacity-value');
     image.style.opacity = opacityValue / 100;
     opacityText.innerText = opacityValue + '%';
 });
 
-blurSlider.addEventListener('input', (event) => {
-    const blurValue = event.target.value;
-    const blurText = document.getElementById('blur-value');
-    image.style.filter = `blur(${blurValue}px)`;
-    blurText.innerText = blurValue + '%';
-});
-
+const bgposText = document.getElementById('bgpos-value');
 bgposSlider.addEventListener('input', (event) => {
     const bgposValue = event.target.value;
-    const bgposText = document.getElementById('bgpos-value');
     image.style.backgroundPosition = `50% ${bgposValue}%`;
     bgposText.innerText = bgposValue + '%';
 });
@@ -240,7 +238,7 @@ del_local.addEventListener('click', () => {
 });
 
 del_yes.addEventListener('click', () => {
-    localStorage.removeItem('imgdata');
+    localStorage.clear();
     location.reload();
 });
 
@@ -268,6 +266,9 @@ api_none.addEventListener('click', () => {
     closeall()
     localStorage.removeItem('imgdata');
     image.style.opacity = 0;
+    setTimeout(() => {
+        image.style.backgroundImage = 'none';
+    }, 1000);
     loader.style.opacity = 0;
 });
 
@@ -291,9 +292,6 @@ picre_changewall.addEventListener('click', () => {
     picre_pixiv.disabled = true;
     picre_download.disabled = true;
     picre_changewall.innerText = 'Đang đổi hình nền...';
-    setTimeout(() => {
-        picre_changewall.innerText = "Chờ một chút..."
-    }, 3000)
     picrew_fetch();
 })
 picre_download.addEventListener('click', () => {
@@ -313,7 +311,7 @@ if (localStorage.getItem('imgdata') == null) {
 } else {
     data = JSON.parse(localStorage.getItem('imgdata'));
     setTimeout(() => {
-        loadImage(`${data.url}`);
+        loadImage();
     }, 500);
     API_name.innerText = data.API_name;
     let a = '.' + data.API_class
@@ -334,12 +332,12 @@ function picrew_fetch() {
             localStorage.setItem('imgdata', JSON.stringify(imgdata));
             loadImage()
         })
-    setTimeout(() => {
-        picre_changewall.disabled = false;
-        picre_pixiv.disabled = false;
-        picre_download.disabled = false;
-        picre_changewall.innerText = 'Đổi hình nền';
-    }, 6000);
+        setTimeout(() => {
+            picre_changewall.disabled = false;
+            picre_pixiv.disabled = false;
+            picre_download.disabled = false;
+            picre_changewall.innerText = 'Đổi hình nền';
+        }, 10000);
 }
 
 function loadImage() {
@@ -356,3 +354,60 @@ function loadImage() {
     previewImage.src = data.url
     previewImage.style.display = 'block'
 }
+
+
+// Save and Load settings
+// Save settings to localStorage
+function saveSettings() {
+    const settings = {
+        opacity: opacitySlider.value,
+        bgpos: bgposSlider.value,
+        fullview: fullview.checked,
+        safemode: safemode.checked,
+        tabTitle: tabtitle.value
+        };
+    localStorage.setItem('settings', JSON.stringify(settings));
+}
+
+// Load settings from localStorage
+function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem('settings'));
+    if (settings) {
+        opacitySlider.value = settings.opacity;
+        bgposSlider.value = settings.bgpos;
+        fullview.checked = settings.fullview;
+        safemode.checked = settings.safemode;
+        tabtitle.value = settings.tabTitle;
+
+        // Apply settings
+        image.style.opacity = opacitySlider.value / 100;
+        opacityText.innerText = opacitySlider.value + '%';
+        image.style.backgroundPosition = `50% ${bgposSlider.value}%`;
+        bgposText.innerText = bgposSlider.value + '%';
+        if (fullview.checked) {
+            image.style.backgroundSize = 'contain';
+        } else {
+            image.style.backgroundSize = 'cover';
+        }
+        if (safemode.checked) {
+            safemodebox.classList.add('shown');
+        } else {
+            safemodebox.classList.remove('shown');
+        }
+        if (tabtitle.value != '') {
+            document.title = tabtitle.value;
+        } else {
+            document.title = 'Tab mới';
+        }
+    }
+}
+
+// Call loadSettings when the page loads
+window.addEventListener('load', loadSettings);
+
+// Save settings whenever a setting is changed
+opacitySlider.addEventListener('input', saveSettings);
+bgposSlider.addEventListener('input', saveSettings);
+fullview.addEventListener('click', saveSettings);
+safemode.addEventListener('click', saveSettings);
+tabtitle.addEventListener('change', saveSettings);

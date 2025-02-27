@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+    "name": "Wibi New Tab",
+    "version": "1.1.0",
+    "description": "Trang tab mới tùy chỉnh",
+    "author": "Natelyt",
+    "chrome_url_overrides": {
+        "newtab": "index.html"
+    },
+    "icons": {
+        "128": "images/traveller.png",
+        "512": "images/traveller.png"
+    }
+}
