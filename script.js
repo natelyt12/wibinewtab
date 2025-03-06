@@ -11,7 +11,7 @@ const choose_API = document.querySelector('.choose-API');
 const previewImage = document.querySelector('.preview-image');
 const date = document.getElementById('calendar');
 const lunar = document.getElementById('lunar-calendar');
-const clock = document.querySelector('.clock'); 
+const clock = document.querySelector('.clock');
 const bgopt = document.querySelector('.bg-settings');
 
 const bgposCenter = document.getElementById('bgpos-center');
@@ -92,9 +92,9 @@ fetch(`https://api.openweathermap.org/data/2.5/weather?q=${'Ha long'}&appid=${ng
     .then(response => response.json())
 
     .then(data => {
-        temp.innerText = `${Math.round(data.main.temp)}°C`
+        temp.innerText = `${Math.round(data.main.temp)}°`
         weathericon.style.backgroundImage = 'url(' + `http://openweathermap.org/img/wn/${data.weather[0].icon}.png` + ')'
-        weathertext.innerText = `${data.name},\n${data.weather[0].description}, cảm giác như ${Math.round(data.main.feels_like)}°C`
+        weathertext.innerText = `${data.name},\n${data.weather[0].description}, cảm giác như ${Math.round(data.main.feels_like)}°`
     })
 
 document.addEventListener('click', (event) => {
@@ -115,7 +115,7 @@ document.addEventListener('keydown', (event) => {
 })
 
 function z() {
-    searchbox.style.width = '220px';
+    searchbox.style.width = '230px';
     document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Nhập bất kỳ]';
     clearsearch.style.display = 'none'
     searchbox.blur()
@@ -264,7 +264,6 @@ api_none.addEventListener('click', () => {
     previewImage.style.display = 'none'
     API_select_box.classList.remove('shown');
     closeall()
-    localStorage.removeItem('imgdata');
     image.style.opacity = 0;
     setTimeout(() => {
         image.style.backgroundImage = 'none';
@@ -280,23 +279,20 @@ api_picrew.addEventListener('click', () => {
     closeall()
     picre_box.classList.toggle('shown');
     picrew_fetch();
-    setTimeout(() => {
-        loadImage();
-    }, 1000);
 });
 const picre_changewall = document.getElementById('picre-changewall');
 const picre_pixiv = document.getElementById('picre-pixiv');
 const picre_download = document.getElementById('picre-download');
 picre_changewall.addEventListener('click', () => {
-    picre_changewall.disabled = true;
-    picre_pixiv.disabled = true;
-    picre_download.disabled = true;
     picre_changewall.innerText = 'Đang đổi hình nền...';
+    loader.style.opacity = 1
+    image.style.opacity = 0.2
     picrew_fetch();
 })
 picre_download.addEventListener('click', () => {
     data = JSON.parse(localStorage.getItem('imgdata'));
-    window.open(data.url);
+    newtab = window.open(data.url);
+    newtab.document.write('<body style="background:black"></body><img src="' + data.url + '" style="width: 100%; height: 100%; object-fit: contain;">');
 })
 picre_pixiv.addEventListener('click', () => {
     data = JSON.parse(localStorage.getItem('imgdata'));
@@ -320,30 +316,33 @@ if (localStorage.getItem('imgdata') == null) {
 }
 
 function picrew_fetch() {
+    picre_changewall.disabled = true;
+    picre_pixiv.disabled = true;
+    picre_download.disabled = true;
+    picre_changewall.innerText = 'Đang đổi hình nền...';
     fetch('https://pic.re/image.json')
         .then(response => response.json())
         .then(data => {
-            imgdata = {
-                "API_name": "Anime Wallpapers",
-                "API_class": "picre",
-                "url": 'https://' + data.file_url,
-                "pixiv": data.source
-            }
-            localStorage.setItem('imgdata', JSON.stringify(imgdata));
-            loadImage()
+            loader.style.opacity = 1
+            image.style.opacity = 0.2
+            let imgurl = 'https://' + data.file_url
+            compressImageFromURL(imgurl, 0.8, (compressedBase64) => {
+                let imgdata = {
+                    "API_name": "Anime Wallpapers",
+                    "API_class": "picre",
+                    "url": compressedBase64,
+                    "pixiv": data.source
+                }
+                localStorage.setItem('imgdata', JSON.stringify(imgdata));
+                setTimeout(() => {
+                    loadImage()
+                }, 500);
+            })
         })
-        setTimeout(() => {
-            picre_changewall.disabled = false;
-            picre_pixiv.disabled = false;
-            picre_download.disabled = false;
-            picre_changewall.innerText = 'Đổi hình nền';
-        }, 10000);
 }
 
 function loadImage() {
-    let data = JSON.parse(localStorage.getItem('imgdata'))
-    loader.style.opacity = 1
-    image.style.opacity = 0.2
+    let data = JSON.parse(localStorage.getItem('imgdata'));
     let img = new Image();
     img.onload = function () {
         image.style.backgroundImage = 'url(' + img.src + ')';
@@ -353,11 +352,51 @@ function loadImage() {
     img.src = data.url
     previewImage.src = data.url
     previewImage.style.display = 'block'
+
+    // pic.re
+    picre_changewall.disabled = false;
+    picre_pixiv.disabled = false;
+    picre_download.disabled = false;
+    picre_changewall.innerText = 'Đổi hình nền';
 }
 
+// Covert to Webp
+function compressImageFromURL(imageUrl, quality = 0.8, callback) {
+    picre_changewall.innerText = 'Đang nén hình nền...'
+    let img = new Image();
+    img.crossOrigin = "Anonymous"; // Cho phép tải ảnh từ domain khác
+    img.src = imageUrl;
+
+    img.onload = function () {
+        let canvas = document.createElement("canvas");
+        let ctx = canvas.getContext("2d");
+
+        // Resize ảnh nếu quá lớn
+        let maxWidth = 1920, maxHeight = 1080;
+        let width = img.width, height = img.height;
+        if (width > maxWidth || height > maxHeight) {
+            let ratio = Math.min(maxWidth / width, maxHeight / height);
+            width *= ratio;
+            height *= ratio;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Chuyển sang WebP
+        let compressedBase64 = canvas.toDataURL("image/webp", quality);
+        callback(compressedBase64);
+    };
+
+    img.onerror = function () {
+        console.error("Không thể tải ảnh:", imageUrl);
+    };
+}
 
 // Save and Load settings
 // Save settings to localStorage
+
 function saveSettings() {
     const settings = {
         opacity: opacitySlider.value,
@@ -365,7 +404,7 @@ function saveSettings() {
         fullview: fullview.checked,
         safemode: safemode.checked,
         tabTitle: tabtitle.value
-        };
+    };
     localStorage.setItem('settings', JSON.stringify(settings));
 }
 
