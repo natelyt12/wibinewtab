@@ -90,7 +90,7 @@ const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
 const ngu = atob("OTFiOTgzODdmNzEyZWRhZTA3MWMyN2JhYjMzZjVkYWM=")
 
-
+getWeather()
 function getWeather() {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=Halong&appid=${ngu}&units=metric&lang=vi`)
 
