@@ -23,7 +23,8 @@
         <div class="image"></div>
         <div class="loader">
             <svg viewBox="25 25 50 50" class="circular">
-                <circle stroke-miterlimit="10" stroke-width="3" fill="none" r="20" cy="50" cx="50" class="path"></circle>
+                <circle stroke-miterlimit="10" stroke-width="3" fill="none" r="20" cy="50" cx="50" class="path">
+                </circle>
             </svg>
         </div>
         <div class="content">
@@ -47,9 +48,11 @@
             <p>Safe mode đã bật để che hình nền của bạn</p>
         </div>
     </div>
+
     <button class="opt-btn">
         <img class="opt-btn-img" src="./image/setting.png" alt="settings">
     </button>
+
     <div class="settings">
         <!-- Error -->
         <div class="error-display setting-tabs">
@@ -60,13 +63,6 @@
         </div>
 
         <!-- new tab -->
-        <div class="new-tab setting-tabs">
-            <div class="tab-title">Tiêu đề Tab</div>
-            <div class="tab-content">
-                <input type="text" id="new-tab-title" placeholder="Enter để lưu">
-            </div>
-        </div>
-
         <div class="API-handle setting-tabs">
             <div class="tab-title">Hình nền</div>
             <div class="tab-content">
@@ -99,7 +95,7 @@
                 <label for="opacity-slider">Độ sáng: <span id="opacity-value">100%</span></label>
                 <input type="range" id="opacity-slider" min="20" max="100" value="100">
                 <!-- Bg position -->
-                <label for="bgpos-slider">Căn chỉnh Y: <span id="bgpos-value">0%</span></label>
+                <label for="bgpos-slider">Y: <span id="bgpos-value">0%</span></label>
                 <input type="range" id="bgpos-slider" min="0" max="100" value="50">
                 <button id="bgpos-center">Căn giữa</button>
                 <!-- Fullscreen -->
@@ -129,6 +125,13 @@
                         </svg>
                     </label>
                 </div>
+            </div>
+        </div>
+
+        <div class="new-tab setting-tabs">
+            <div class="tab-title">Tiêu đề Tab</div>
+            <div class="tab-content">
+                <input type="text" id="new-tab-title" placeholder="Enter để lưu">
             </div>
         </div>
 

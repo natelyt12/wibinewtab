@@ -83,19 +83,25 @@ fetch('https://open.oapi.vn/date/convert-to-lunar', {
     .catch(error => console.error(error))
 
 
+// Weather
+const weather_loc = document.getElementById('weather-location');
 const weathericon = document.querySelector('.icon')
 const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
 const ngu = atob("OTFiOTgzODdmNzEyZWRhZTA3MWMyN2JhYjMzZjVkYWM=")
-fetch(`https://api.openweathermap.org/data/2.5/weather?q=${'Ha long'}&appid=${ngu}&units=metric&lang=vi`)
 
-    .then(response => response.json())
 
-    .then(data => {
-        temp.innerText = `${Math.round(data.main.temp)}°`
-        weathericon.style.backgroundImage = 'url(' + `http://openweathermap.org/img/wn/${data.weather[0].icon}.png` + ')'
-        weathertext.innerText = `${data.name},\n${data.weather[0].description}, cảm giác như ${Math.round(data.main.feels_like)}°`
-    })
+function getWeather() {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=Halong&appid=${ngu}&units=metric&lang=vi`)
+
+        .then(response => response.json())
+
+        .then(data => {
+            temp.innerText = `${Math.round(data.main.temp)}°`
+            weathericon.style.backgroundImage = 'url(' + `http://openweathermap.org/img/wn/${data.weather[0].icon}.png` + ')'
+            weathertext.innerText = `${data.name},\n${data.weather[0].description}, cảm giác như ${Math.round(data.main.feels_like)}°`
+        })
+}
 
 document.addEventListener('click', (event) => {
     if (!searchcontainer.contains(event.target) && !searchbox.contains(event.target)) {
@@ -236,17 +242,14 @@ del_local.addEventListener('click', () => {
     del_confirm.classList.toggle('shown');
     del_local.disabled = true;
 });
-
 del_yes.addEventListener('click', () => {
     localStorage.clear();
     location.reload();
 });
-
 del_no.addEventListener('click', () => {
     del_confirm.classList.remove('shown');
     del_local.disabled = false;
 });
-
 
 // API handler
 choose_API.addEventListener('click', () => {
@@ -265,10 +268,12 @@ api_none.addEventListener('click', () => {
     API_select_box.classList.remove('shown');
     closeall()
     image.style.opacity = 0;
+    // Đợi fadeout hết
     setTimeout(() => {
         image.style.backgroundImage = 'none';
     }, 1000);
     loader.style.opacity = 0;
+    localStorage.removeItem('imgdata');
 });
 
 
@@ -280,9 +285,11 @@ api_picrew.addEventListener('click', () => {
     picre_box.classList.toggle('shown');
     picrew_fetch();
 });
+
 const picre_changewall = document.getElementById('picre-changewall');
 const picre_pixiv = document.getElementById('picre-pixiv');
 const picre_download = document.getElementById('picre-download');
+const apihandle = document.querySelector('.API-handle');
 picre_changewall.addEventListener('click', () => {
     picre_changewall.innerText = 'Đang đổi hình nền...';
     loader.style.opacity = 1
@@ -291,8 +298,7 @@ picre_changewall.addEventListener('click', () => {
 })
 picre_download.addEventListener('click', () => {
     data = JSON.parse(localStorage.getItem('imgdata'));
-    newtab = window.open(data.url);
-    newtab.document.write('<body style="background:black"></body><img src="' + data.url + '" style="width: 100%; height: 100%; object-fit: contain;">');
+    window.open(data.cdnurl);
 })
 picre_pixiv.addEventListener('click', () => {
     data = JSON.parse(localStorage.getItem('imgdata'));
@@ -306,9 +312,7 @@ if (localStorage.getItem('imgdata') == null) {
     loader.style.opacity = 0;
 } else {
     data = JSON.parse(localStorage.getItem('imgdata'));
-    setTimeout(() => {
-        loadImage();
-    }, 500);
+    loadImage();
     API_name.innerText = data.API_name;
     let a = '.' + data.API_class
     let api_element = document.querySelector(a)
@@ -316,9 +320,8 @@ if (localStorage.getItem('imgdata') == null) {
 }
 
 function picrew_fetch() {
-    picre_changewall.disabled = true;
-    picre_pixiv.disabled = true;
-    picre_download.disabled = true;
+    apihandle.style.opacity = 0.4
+    apihandle.style.pointerEvents = 'none'
     picre_changewall.innerText = 'Đang đổi hình nền...';
     fetch('https://pic.re/image.json')
         .then(response => response.json())
@@ -331,6 +334,7 @@ function picrew_fetch() {
                     "API_name": "Anime Wallpapers",
                     "API_class": "picre",
                     "url": compressedBase64,
+                    "cdnurl": imgurl,
                     "pixiv": data.source
                 }
                 localStorage.setItem('imgdata', JSON.stringify(imgdata));
@@ -354,20 +358,19 @@ function loadImage() {
     previewImage.style.display = 'block'
 
     // pic.re
-    picre_changewall.disabled = false;
-    picre_pixiv.disabled = false;
-    picre_download.disabled = false;
+    apihandle.style.opacity = 1
+    apihandle.style.pointerEvents = 'auto'
     picre_changewall.innerText = 'Đổi hình nền';
 }
 
 // Covert to Webp
 function compressImageFromURL(imageUrl, quality = 0.8, callback) {
-    picre_changewall.innerText = 'Đang nén hình nền...'
     let img = new Image();
     img.crossOrigin = "Anonymous"; // Cho phép tải ảnh từ domain khác
     img.src = imageUrl;
 
     img.onload = function () {
+        picre_changewall.innerText = 'Đang nén hình nền...'
         let canvas = document.createElement("canvas");
         let ctx = canvas.getContext("2d");
 

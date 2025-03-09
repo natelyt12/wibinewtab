@@ -55,7 +55,7 @@ input[type="text"] {
     left: 50%;
     transform: translate(-50%, -50%) scale(0.5);
     width: 60px;
-    transition: 1s;
+    transition: 0.5s;
 }
 
 .loader:before {
@@ -581,4 +581,8 @@ span {
 
 #lunar-calendar {
     font-size: 0.9em;
+}
+
+.API-handle{
+    transition: .5s;
 }
