@@ -22,8 +22,6 @@ let settingstate = false;
 // API
 const API_name = document.querySelector('.API-name');
 const api_none = document.getElementById('api_none');
-const api_picrew = document.getElementById('api_picrew');
-const picre_box = document.querySelector('.picre')
 
 // Error handler
 const errorDisplay = document.querySelector('.error-display');
@@ -83,26 +81,6 @@ fetch('https://open.oapi.vn/date/convert-to-lunar', {
     .catch(error => console.error(error))
 
 
-// Weather
-const weather_loc = document.getElementById('weather-location');
-const weathericon = document.querySelector('.icon')
-const weathertext = document.querySelector('.weather')
-const temp = document.querySelector('.temp')
-const ngu = atob("OTFiOTgzODdmNzEyZWRhZTA3MWMyN2JhYjMzZjVkYWM=")
-
-getWeather()
-function getWeather() {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=Halong&appid=${ngu}&units=metric&lang=vi`)
-
-        .then(response => response.json())
-
-        .then(data => {
-            temp.innerText = `${Math.round(data.main.temp)}°`
-            weathericon.style.backgroundImage = 'url(' + `http://openweathermap.org/img/wn/${data.weather[0].icon}.png` + ')'
-            weathertext.innerText = `${data.name},\n${data.weather[0].description}, cảm giác như ${Math.round(data.main.feels_like)}°`
-        })
-}
-
 document.addEventListener('click', (event) => {
     if (!searchcontainer.contains(event.target) && !searchbox.contains(event.target)) {
         z()
@@ -125,10 +103,32 @@ function z() {
     document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Nhập bất kỳ]';
     clearsearch.style.display = 'none'
     searchbox.blur()
-    searchbox.value = ''
     searchbox.style.fontSize = '0.8em'
 }
 
+
+// Weather
+const weather_loc = document.getElementById('weather-location');
+const weathericon = document.querySelector('.icon')
+const weathertext = document.querySelector('.weather')
+const temp = document.querySelector('.temp')
+const ngu = atob("OTFiOTgzODdmNzEyZWRhZTA3MWMyN2JhYjMzZjVkYWM=")
+
+getWeather("Halong")
+function getWeather(city) {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${ngu}&units=metric&lang=vi`)
+
+        .then(response => response.json())
+
+        .then(data => {
+            temp.innerText = `${Math.round(data.main.temp)}°`
+            weathericon.style.backgroundImage = 'url(' + `http://openweathermap.org/img/wn/${data.weather[0].icon}.png` + ')'
+            weathertext.innerText = `${data.name},\n${data.weather[0].description}, cảm giác như ${Math.round(data.main.feels_like)}°`
+        })
+}
+
+
+// Search
 const searchbox = document.getElementById('search')
 const searchcontainer = document.querySelector('.search')
 const clearsearch = document.getElementById('clear')
@@ -150,7 +150,7 @@ clearsearch.addEventListener('click', () => {
     searchbox.focus()
 })
 
-// Settings handler
+// Toggle settings
 document.addEventListener('keydown', (event) => {
     if (event.ctrlKey && event.key === 'z') {
         setting.classList.toggle('active');
@@ -183,7 +183,7 @@ settingBtn.addEventListener('click', () => {
 //     }
 // });
 
-// Tab title handler
+// Tab title
 const tabtitle = document.getElementById('new-tab-title');
 tabtitle.addEventListener('change', () => {
     if (tabtitle.value != '') {
@@ -194,7 +194,7 @@ tabtitle.addEventListener('change', () => {
     tabtitle.blur()
 });
 
-// Slider handler
+// Slider
 const opacityText = document.getElementById('opacity-value');
 opacitySlider.addEventListener('input', (event) => {
     const opacityValue = event.target.value;
@@ -214,7 +214,6 @@ bgposCenter.addEventListener('click', () => {
     bgposSlider.dispatchEvent(new Event('input'));
 });
 
-// Fullview handler
 fullview.addEventListener('click', () => {
     if (fullview.checked) {
         image.style.backgroundSize = 'contain';
@@ -223,7 +222,6 @@ fullview.addEventListener('click', () => {
     }
 })
 
-// Safemode handler
 const safemodebox = document.querySelector('.safemode-box');
 safemode.addEventListener('click', () => {
     if (safemode.checked) {
@@ -251,7 +249,36 @@ del_no.addEventListener('click', () => {
     del_local.disabled = false;
 });
 
-// API handler
+// API options -------------------------------------------------------
+const api_picrew = document.getElementById('api_picrew');
+const picre_box = document.querySelector('.picre')
+const picre_changewall = document.getElementById('picre-changewall');
+const picre_pixiv = document.getElementById('picre-pixiv');
+const picre_download = document.getElementById('picre-download');
+const apihandle = document.querySelector('.API-handle');
+const localimage = document.getElementById('api_local');
+const localimagebox = document.querySelector('.localimage');
+
+
+// Get API status when load the page
+chrome.storage.local.get('imgdata', (data) => {
+    if (data.imgdata == undefined) {
+        API_name.innerText = 'Không có';
+        closeall()
+        loader.style.opacity = 0;
+    } else {
+        let parseddata = JSON.parse(data.imgdata); 
+        API_name.innerText = parseddata.API_name;
+        let a = '.' + parseddata.API_class
+        let api_element = document.querySelector(a)
+        api_element.classList.toggle('shown')
+        loadImage();
+        if (parseddata.url == '') {
+            loader.style.opacity = 0;
+        }
+    }
+});
+
 choose_API.addEventListener('click', () => {
     API_select_box.classList.toggle('shown');
 })
@@ -259,9 +286,10 @@ choose_API.addEventListener('click', () => {
 // Close all API options
 function closeall() {
     picre_box.classList.remove('shown');
+    localimagebox.classList.remove('shown');
 }
 
-// none
+// Select: No API
 api_none.addEventListener('click', () => {
     API_name.innerText = 'Không có';
     previewImage.style.display = 'none'
@@ -273,11 +301,49 @@ api_none.addEventListener('click', () => {
         image.style.backgroundImage = 'none';
     }, 1000);
     loader.style.opacity = 0;
-    localStorage.removeItem('imgdata');
+    chrome.storage.local.remove('imgdata');
+});
+
+// Select: Local image
+localimage.addEventListener('click', () => {
+    closeall()
+    API_name.innerText = localimage.innerText;
+    API_select_box.classList.remove('shown');
+    localimagebox.classList.toggle('shown');
+    let imgdata = {
+        "API_name": "Hình nền cục bộ",
+        "API_class": "localimage",
+        "url": ""
+    }
+    chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
+});
+
+// Local image options
+document.getElementById("pick-image").addEventListener("click", function () {
+    document.getElementById("fileInput").click();
+});
+
+document.getElementById("fileInput").addEventListener("change", function (event) {
+    let file = event.target.files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            chrome.storage.local.get('imgdata', (data) => {
+                let imgdata = {
+                    "API_name": "Hình nền cục bộ",
+                    "API_class": "localimage",
+                    "url": e.target.result
+                }
+                chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
+                loadImage();
+            })
+        };
+        reader.readAsDataURL(file); // Chuyển file thành Base64 để hiển thị
+    }
 });
 
 
-// picrew
+// Select: Anime Wallpapers
 api_picrew.addEventListener('click', () => {
     API_name.innerText = api_picrew.innerText;
     API_select_box.classList.remove('shown');
@@ -285,11 +351,7 @@ api_picrew.addEventListener('click', () => {
     picre_box.classList.toggle('shown');
     picrew_fetch();
 });
-
-const picre_changewall = document.getElementById('picre-changewall');
-const picre_pixiv = document.getElementById('picre-pixiv');
-const picre_download = document.getElementById('picre-download');
-const apihandle = document.querySelector('.API-handle');
+// Anime Wallpapers options
 picre_changewall.addEventListener('click', () => {
     picre_changewall.innerText = 'Đang đổi hình nền...';
     loader.style.opacity = 1
@@ -297,28 +359,20 @@ picre_changewall.addEventListener('click', () => {
     picrew_fetch();
 })
 picre_download.addEventListener('click', () => {
-    data = JSON.parse(localStorage.getItem('imgdata'));
-    window.open(data.cdnurl);
+    chrome.storage.local.get('imgdata', (data) => {
+        data = JSON.parse(data.imgdata);
+        window.open(data.cdnurl);
+    });
 })
 picre_pixiv.addEventListener('click', () => {
-    data = JSON.parse(localStorage.getItem('imgdata'));
-    window.open(data.pixiv);
+    chrome.storage.local.get('imgdata', (data) => {
+        data = JSON.parse(data.imgdata);
+        window.open(data.pixiv);
+    });
 })
 
-// Image API handler
-if (localStorage.getItem('imgdata') == null) {
-    API_name.innerText = 'Không có';
-    closeall()
-    loader.style.opacity = 0;
-} else {
-    data = JSON.parse(localStorage.getItem('imgdata'));
-    loadImage();
-    API_name.innerText = data.API_name;
-    let a = '.' + data.API_class
-    let api_element = document.querySelector(a)
-    api_element.classList.toggle('shown')
-}
 
+// Anime Wallpapers: Fetch
 function picrew_fetch() {
     apihandle.style.opacity = 0.4
     apihandle.style.pointerEvents = 'none'
@@ -337,7 +391,7 @@ function picrew_fetch() {
                     "cdnurl": imgurl,
                     "pixiv": data.source
                 }
-                localStorage.setItem('imgdata', JSON.stringify(imgdata));
+                chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
                 setTimeout(() => {
                     loadImage()
                 }, 500);
@@ -345,22 +399,28 @@ function picrew_fetch() {
         })
 }
 
+// Load background image
 function loadImage() {
-    let data = JSON.parse(localStorage.getItem('imgdata'));
-    let img = new Image();
-    img.onload = function () {
-        image.style.backgroundImage = 'url(' + img.src + ')';
-        loader.style.opacity = 0;
-        image.style.opacity = opacitySlider.value / 100;
-    };
-    img.src = data.url
-    previewImage.src = data.url
-    previewImage.style.display = 'block'
+    let data = chrome.storage.local.get('imgdata', (data) => {
+        data = JSON.parse(data.imgdata);
+        let img = new Image();
+        img.onload = function () {
+            image.style.backgroundImage = 'url(' + img.src + ')';
+            loader.style.opacity = 0;
+            image.style.opacity = opacitySlider.value / 100;
+        };
+        img.src = data.url
+        previewImage.src = data.url
+        previewImage.style.display = 'block'
 
-    // pic.re
-    apihandle.style.opacity = 1
-    apihandle.style.pointerEvents = 'auto'
-    picre_changewall.innerText = 'Đổi hình nền';
+        // pic.re
+        if (data.API_name == 'Anime Wallpapers') {
+            apihandle.style.opacity = 1
+            apihandle.style.pointerEvents = 'auto'
+            picre_changewall.innerText = 'Đổi hình nền';
+        }
+    });
+
 }
 
 // Covert to Webp
@@ -397,9 +457,7 @@ function compressImageFromURL(imageUrl, quality = 0.8, callback) {
     };
 }
 
-// Save and Load settings
-// Save settings to localStorage
-
+// Save and Load settings ----------------------------------------------------------
 function saveSettings() {
     const settings = {
         opacity: opacitySlider.value,

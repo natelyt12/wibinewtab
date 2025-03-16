@@ -376,6 +376,9 @@ input[type="range"]:hover {
     padding: 0;
     margin: 0;
     font-size: 0.7em;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 .preview-image {
@@ -583,6 +586,10 @@ span {
     font-size: 0.9em;
 }
 
-.API-handle{
+.API-handle {
     transition: .5s;
+}
+
+.localimage {
+    display: none;
 }
