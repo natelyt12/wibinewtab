@@ -194,6 +194,8 @@ tabtitle.addEventListener('change', () => {
     tabtitle.blur()
 });
 
+
+
 // Slider
 const opacityText = document.getElementById('opacity-value');
 opacitySlider.addEventListener('input', (event) => {
