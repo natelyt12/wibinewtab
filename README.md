@@ -1,1 +1,1 @@
-newtab wibi của bố
+Newtab tùy chỉnh, tối giản của Natelyt
