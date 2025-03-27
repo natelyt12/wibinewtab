@@ -656,7 +656,7 @@ if (localStorage.getItem('settings') == null) {
     saveSettings()
 }
 if (cache.cache != day().day) {
-    getWeather(loc4tion)
+    getWeather(weather_input.value)
 } else {
     weathertext.innerText = cache.weather_cache.weather
     temp.innerText = cache.weather_cache.temp
