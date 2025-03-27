@@ -108,22 +108,43 @@ function z() {
 
 
 // Weather
-const weather_loc = document.getElementById('weather-location');
 const weathericon = document.querySelector('.icon')
 const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
-const ngu = atob("OTFiOTgzODdmNzEyZWRhZTA3MWMyN2JhYjMzZjVkYWM=")
+const weatherDescMap = {
+    "Sunny": "Trời nắng",
+    "Partly Cloudy": "Ít mây",
+    "Cloudy": "Nhiều mây",
+    "Overcast": "Mây đen u ám",
+    "Light rain": "Mưa nhỏ",
+    "Heavy rain": "Mưa lớn",
+    "Mist": "Sương mù"
+};
+
+const weatherIconMap = {
+    "Sunny": "01d_t@2x.png",
+    "Partly Cloudy": "02d_t@2x.png",
+    "Cloudy": "03d_t@2x.png",
+    "Overcast": "04d_t@2x.png",
+    "Light rain": "10d_t@2x.png",
+    "Heavy rain": "09d_t@2x.png",
+    "Mist": "50d_t@2x.png"
+};
 
 getWeather("Halong")
 function getWeather(city) {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${ngu}&units=metric&lang=vi`)
-
-        .then(response => response.json())
-
+    fetch(`https://wttr.in/${city}?format=j1`)
+        .then(response => response.text())
         .then(data => {
-            temp.innerText = `${Math.round(data.main.temp)}°`
-            weathericon.style.backgroundImage = 'url(' + `http://openweathermap.org/img/wn/${data.weather[0].icon}.png` + ')'
-            weathertext.innerText = `${data.name},\n${data.weather[0].description}, cảm giác như ${Math.round(data.main.feels_like)}°`
+            data = JSON.parse(data)
+            let desc = data.current_condition[0].weatherDesc[0].value
+            let descVN = weatherDescMap[desc] || desc;
+            let iconMap = weatherIconMap[desc] || desc;
+            let icon = './image/weather/' + iconMap
+            weathertext.innerText = data.nearest_area[0].areaName[0].value + ', ' + data.nearest_area[0].country[0].value + '\n' + descVN + ', cảm giác như ' + data.current_condition[0].FeelsLikeC + '°C'
+            temp.innerText = data.current_condition[0].temp_C + '°C'
+            weathericon.style.backgroundImage = `url(${icon})`
+            
         })
 }
 
@@ -216,21 +237,49 @@ bgposCenter.addEventListener('click', () => {
     bgposSlider.dispatchEvent(new Event('input'));
 });
 
-fullview.addEventListener('click', () => {
-    if (fullview.checked) {
-        image.style.backgroundSize = 'contain';
+const movebgtoggle = document.querySelector('.movebgtoggle');
+const move_bg_toggle = document.getElementById('move_bg_toggle');
+
+// Fullview
+function movebg() {
+    if (move_bg_toggle.checked) {
+        background_blur.style.animationPlayState = 'running';
     } else {
-        image.style.backgroundSize = 'cover';
+        background_blur.style.animationPlayState = 'paused';
     }
+}
+move_bg_toggle.addEventListener('click', () => {
+    movebg()
 })
 
+function checkfullview() {
+    if (fullview.checked) {
+        image.style.backgroundSize = 'contain';
+        movebgtoggle.style.display = 'block';
+        background_blur.style.display = 'block';
+    } else {
+        image.style.backgroundSize = 'cover';
+        movebgtoggle.style.display = 'none';
+        background_blur.style.display = 'none';
+        move_bg_toggle.checked = false;
+        movebg()
+    }
+}
+fullview.addEventListener('click', () => {
+    checkfullview()
+})
+
+// Safemode
 const safemodebox = document.querySelector('.safemode-box');
-safemode.addEventListener('click', () => {
+function safemodebg() {
     if (safemode.checked) {
         safemodebox.classList.toggle('shown');
     } else {
         safemodebox.classList.remove('shown');
     }
+}
+safemode.addEventListener('click', () => {
+    safemodebg()
 });
 
 // debug
@@ -240,7 +289,7 @@ const del_yes = document.querySelector('.del-yes');
 const del_no = document.querySelector('.del-no');
 del_local.addEventListener('click', () => {
     del_confirm.classList.toggle('shown');
-    del_local.disabled = true;
+    del_local.style.display = 'none';
 });
 del_yes.addEventListener('click', () => {
     localStorage.clear();
@@ -248,7 +297,7 @@ del_yes.addEventListener('click', () => {
 });
 del_no.addEventListener('click', () => {
     del_confirm.classList.remove('shown');
-    del_local.disabled = false;
+    del_local.style.display = 'block';
 });
 
 // API options -------------------------------------------------------
@@ -260,7 +309,11 @@ const picre_download = document.getElementById('picre-download');
 const apihandle = document.querySelector('.API-handle');
 const localimage = document.getElementById('api_local');
 const localimagebox = document.querySelector('.localimage');
+const background_blur = document.querySelector('.background_blur');
 
+const api_picsum = document.getElementById('api_picsum');
+const picsum_box = document.querySelector('.picsum')
+const picsum_changewall = document.getElementById('picsum-changewall');
 
 // Get API status when load the page
 chrome.storage.local.get('imgdata', (data) => {
@@ -269,7 +322,7 @@ chrome.storage.local.get('imgdata', (data) => {
         closeall()
         loader.style.opacity = 0;
     } else {
-        let parseddata = JSON.parse(data.imgdata); 
+        let parseddata = JSON.parse(data.imgdata);
         API_name.innerText = parseddata.API_name;
         let a = '.' + parseddata.API_class
         let api_element = document.querySelector(a)
@@ -289,6 +342,7 @@ choose_API.addEventListener('click', () => {
 function closeall() {
     picre_box.classList.remove('shown');
     localimagebox.classList.remove('shown');
+    picsum_box.classList.remove('shown');
 }
 
 // Select: No API
@@ -298,6 +352,7 @@ api_none.addEventListener('click', () => {
     API_select_box.classList.remove('shown');
     closeall()
     image.style.opacity = 0;
+    background_blur.style.backgroundImage = 'none';
     // Đợi fadeout hết
     setTimeout(() => {
         image.style.backgroundImage = 'none';
@@ -319,6 +374,19 @@ localimage.addEventListener('click', () => {
     }
     chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
 });
+
+// Select: Picsum Photos
+api_picsum.addEventListener('click', () => {
+    API_name.innerText = api_picsum.innerText;
+    API_select_box.classList.remove('shown');
+    closeall()
+    picsum_box.classList.toggle('shown');
+    picsum_fetch();
+});
+// Picsum options
+picsum_changewall.addEventListener('click', () => {
+    picsum_fetch();
+})
 
 // Local image options
 document.getElementById("pick-image").addEventListener("click", function () {
@@ -357,7 +425,6 @@ api_picrew.addEventListener('click', () => {
 picre_changewall.addEventListener('click', () => {
     picre_changewall.innerText = 'Đang đổi hình nền...';
     loader.style.opacity = 1
-    image.style.opacity = 0.2
     picrew_fetch();
 })
 picre_download.addEventListener('click', () => {
@@ -373,6 +440,30 @@ picre_pixiv.addEventListener('click', () => {
     });
 })
 
+// Lorem Picsum: Fetch
+function picsum_fetch() {
+    apihandle.style.opacity = 0.4
+    loader.style.opacity = 1
+    picsum_changewall.innerText = 'Đang đổi hình nền...';
+    apihandle.style.pointerEvents = 'none'
+    fetch('https://picsum.photos/1920/1080.webp')
+        .then(response => response.blob())
+        .then(blob => {
+            let reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+                let imgdata = {
+                    "API_name": "Lorem Picsum",
+                    "API_class": "picsum",
+                    "url": reader.result
+                }
+                chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
+                setTimeout(() => {
+                    loadImage()
+                }, 500);
+            }
+        })
+}
 
 // Anime Wallpapers: Fetch
 function picrew_fetch() {
@@ -383,11 +474,10 @@ function picrew_fetch() {
         .then(response => response.json())
         .then(data => {
             loader.style.opacity = 1
-            image.style.opacity = 0.2
             let imgurl = 'https://' + data.file_url
             compressImageFromURL(imgurl, 0.8, (compressedBase64) => {
                 let imgdata = {
-                    "API_name": "Anime Wallpapers",
+                    "API_name": "Picrew",
                     "API_class": "picre",
                     "url": compressedBase64,
                     "cdnurl": imgurl,
@@ -403,11 +493,12 @@ function picrew_fetch() {
 
 // Load background image
 function loadImage() {
-    let data = chrome.storage.local.get('imgdata', (data) => {
+    chrome.storage.local.get('imgdata', (data) => {
         data = JSON.parse(data.imgdata);
         let img = new Image();
         img.onload = function () {
             image.style.backgroundImage = 'url(' + img.src + ')';
+            background_blur.style.backgroundImage = 'url(' + img.src + ')';
             loader.style.opacity = 0;
             image.style.opacity = opacitySlider.value / 100;
         };
@@ -420,6 +511,12 @@ function loadImage() {
             apihandle.style.opacity = 1
             apihandle.style.pointerEvents = 'auto'
             picre_changewall.innerText = 'Đổi hình nền';
+        }
+        // Picsum
+        if (data.API_name == 'Lorem Picsum') {
+            apihandle.style.opacity = 1
+            apihandle.style.pointerEvents = 'auto'
+            picsum_changewall.innerText = 'Đổi hình nền';
         }
     });
 
@@ -465,10 +562,14 @@ function saveSettings() {
         opacity: opacitySlider.value,
         bgpos: bgposSlider.value,
         fullview: fullview.checked,
+        bganim: move_bg_toggle.checked,
         safemode: safemode.checked,
         tabTitle: tabtitle.value
     };
     localStorage.setItem('settings', JSON.stringify(settings));
+}
+if (localStorage.getItem('settings') == null) {
+    saveSettings()
 }
 
 // Load settings from localStorage
@@ -480,22 +581,16 @@ function loadSettings() {
         fullview.checked = settings.fullview;
         safemode.checked = settings.safemode;
         tabtitle.value = settings.tabTitle;
+        move_bg_toggle.checked = settings.bganim
 
         // Apply settings
         image.style.opacity = opacitySlider.value / 100;
         opacityText.innerText = opacitySlider.value + '%';
         image.style.backgroundPosition = `50% ${bgposSlider.value}%`;
         bgposText.innerText = bgposSlider.value + '%';
-        if (fullview.checked) {
-            image.style.backgroundSize = 'contain';
-        } else {
-            image.style.backgroundSize = 'cover';
-        }
-        if (safemode.checked) {
-            safemodebox.classList.add('shown');
-        } else {
-            safemodebox.classList.remove('shown');
-        }
+        checkfullview()
+        movebg()
+        safemodebg()
         if (tabtitle.value != '') {
             document.title = tabtitle.value;
         } else {
@@ -513,3 +608,5 @@ bgposSlider.addEventListener('input', saveSettings);
 fullview.addEventListener('click', saveSettings);
 safemode.addEventListener('click', saveSettings);
 tabtitle.addEventListener('change', saveSettings);
+move_bg_toggle.addEventListener('click', saveSettings);
+
