@@ -31,23 +31,32 @@ window.onerror = function (message, source, lineno, colno, error) {
     errorDisplay.style.display = 'block';
     errorText.innerText = `Error: ${message} at ${source}:${lineno}:${colno}`;
 };
-
 // function triggerError() {
 //     throw new Error("This is a test error");
 // }
 // triggerError();
 
+if (localStorage.getItem('cache') == null) {
+    let cache = {
+        "cache": 0,
+        "weather_cache": {},
+        "lunar_cache": {}
+    }
+    localStorage.setItem('cache', JSON.stringify(cache))
+}
+const cache = JSON.parse(localStorage.getItem('cache'))
+document.getElementById('cache_status').innerText = `${day().day}/${day().month}`
 
-// time stuff
-function updateClock() {
+// Time stuff -------------------------------------------------------
+function getClock() {
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const time = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
     clock.innerText = time;
 }
-updateClock()
-setInterval(updateClock, 5000);
+getClock()
+setInterval(getClock, 5000);
 
 function day() {
     const today = new Date();
@@ -66,51 +75,30 @@ function day() {
     return lunarconvert
 }
 
-fetch('https://open.oapi.vn/date/convert-to-lunar', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(day())
-})
-    .then(response => response.json())
-    .then(data => {
-        let d = data.data
-        lunar.innerText = `Âm lịch: Ngày ${d.day} tháng ${d.month} năm ${d.sexagenaryCycle}`
+// Lunar calendar
+function nunar() {
+    fetch('https://open.oapi.vn/date/convert-to-lunar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(day())
     })
-    .catch(error => console.error(error))
-
-
-document.addEventListener('click', (event) => {
-    if (!searchcontainer.contains(event.target) && !searchbox.contains(event.target)) {
-        z()
-    }
-    if (!setting.contains(event.target) && !settingBtn.contains(event.target)) {
-        setting.classList.remove('active');
-        settingBtn.classList.remove('active2');
-        settingstate = false;
-    }
-});
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === "Escape") {
-        z()
-    }
-})
-
-function z() {
-    searchbox.style.width = '230px';
-    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Nhập bất kỳ]';
-    clearsearch.style.display = 'none'
-    searchbox.blur()
-    searchbox.style.fontSize = '0.8em'
+        .then(response => response.json())
+        .then(data => {
+            let d = data.data
+            lunar.innerText = `Âm lịch: Ngày ${d.day} tháng ${d.month} năm ${d.sexagenaryCycle}`
+            cache.lunar_cache = lunar.innerText
+            localStorage.setItem('cache', JSON.stringify(cache))
+        })
 }
 
 
-// Weather
+// Weather stuff -------------------------------------------------------
 const weathericon = document.querySelector('.icon')
 const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
+const loc4tion = 'Halong'
 const weatherDescMap = {
     "Sunny": "Trời nắng",
     "Partly Cloudy": "Ít mây",
@@ -131,7 +119,6 @@ const weatherIconMap = {
     "Mist": "50d_t@2x.png"
 };
 
-getWeather("Halong")
 function getWeather(city) {
     fetch(`https://wttr.in/${city}?format=j1`)
         .then(response => response.text())
@@ -144,12 +131,22 @@ function getWeather(city) {
             weathertext.innerText = data.nearest_area[0].areaName[0].value + ', ' + data.nearest_area[0].country[0].value + '\n' + descVN + ', cảm giác như ' + data.current_condition[0].FeelsLikeC + '°C'
             temp.innerText = data.current_condition[0].temp_C + '°C'
             weathericon.style.backgroundImage = `url(${icon})`
-            
-        })
+
+            // Save to cache
+            cache.weather_cache = {
+                "weather": weathertext.innerText,
+                "temp": temp.innerText,
+                "icon": icon
+            }
+            cache.cache = day().day
+            localStorage.setItem('cache', JSON.stringify(cache))
+            nunar()
+        }
+        )
 }
 
 
-// Search
+// Search stuff -------------------------------------------------------
 const searchbox = document.getElementById('search')
 const searchcontainer = document.querySelector('.search')
 const clearsearch = document.getElementById('clear')
@@ -171,7 +168,32 @@ clearsearch.addEventListener('click', () => {
     searchbox.focus()
 })
 
-// Toggle settings
+// Zoom search box when type
+document.addEventListener('click', (event) => {
+    if (!searchcontainer.contains(event.target) && !searchbox.contains(event.target)) {
+        normsearchstate()
+    }
+    if (!setting.contains(event.target) && !settingBtn.contains(event.target)) {
+        setting.classList.remove('active');
+        settingBtn.classList.remove('active2');
+        settingstate = false;
+    }
+});
+document.addEventListener('keydown', (event) => {
+    if (event.key === "Escape") {
+        normsearchstate()
+    }
+})
+function normsearchstate() {
+    searchbox.style.width = '230px';
+    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Nhập bất kỳ]';
+    clearsearch.style.display = 'none'
+    searchbox.blur()
+    searchbox.style.fontSize = '0.8em'
+}
+
+
+// Hotkeys -------------------------------------------------------
 document.addEventListener('keydown', (event) => {
     if (event.ctrlKey && event.key === 'z') {
         setting.classList.toggle('active');
@@ -197,13 +219,7 @@ settingBtn.addEventListener('click', () => {
     settingstate = !settingstate;
 });
 
-// document.addEventListener('click', (event) => {
-//     if (!setting.contains(event.target) && !settingBtn.contains(event.target)) {
-//         setting.classList.remove('active');
-//         settingBtn.classList.remove('active2');
-//     }
-// });
-
+// Settings items -------------------------------------------------------
 // Tab title
 const tabtitle = document.getElementById('new-tab-title');
 tabtitle.addEventListener('change', () => {
@@ -215,9 +231,7 @@ tabtitle.addEventListener('change', () => {
     tabtitle.blur()
 });
 
-
-
-// Slider
+// Opacity
 const opacityText = document.getElementById('opacity-value');
 opacitySlider.addEventListener('input', (event) => {
     const opacityValue = event.target.value;
@@ -225,22 +239,23 @@ opacitySlider.addEventListener('input', (event) => {
     opacityText.innerText = opacityValue + '%';
 });
 
+// Background position
 const bgposText = document.getElementById('bgpos-value');
 bgposSlider.addEventListener('input', (event) => {
     const bgposValue = event.target.value;
     image.style.backgroundPosition = `50% ${bgposValue}%`;
     bgposText.innerText = bgposValue + '%';
 });
-
 bgposCenter.addEventListener('click', () => {
     bgposSlider.value = 50;
     bgposSlider.dispatchEvent(new Event('input'));
 });
 
+// Full view
 const movebgtoggle = document.querySelector('.movebgtoggle');
 const move_bg_toggle = document.getElementById('move_bg_toggle');
-
-// Fullview
+const background_blur = document.querySelector('.background_blur');
+const sliderbox = document.querySelector('.slider');
 function movebg() {
     if (move_bg_toggle.checked) {
         background_blur.style.animationPlayState = 'running';
@@ -251,16 +266,23 @@ function movebg() {
 move_bg_toggle.addEventListener('click', () => {
     movebg()
 })
-
 function checkfullview() {
     if (fullview.checked) {
         image.style.backgroundSize = 'contain';
         movebgtoggle.style.display = 'block';
         background_blur.style.display = 'block';
+        sliderbox.style.opacity = '0.5';
+        sliderbox.style.pointerEvents = 'none';
+        opacitySlider.value = 100
+        opacitySlider.dispatchEvent(new Event('input'));
+        bgposSlider.value = 50
+        bgposSlider.dispatchEvent(new Event('input'));
     } else {
         image.style.backgroundSize = 'cover';
         movebgtoggle.style.display = 'none';
         background_blur.style.display = 'none';
+        sliderbox.style.opacity = '1';
+        sliderbox.style.pointerEvents = 'auto';
         move_bg_toggle.checked = false;
         movebg()
     }
@@ -282,7 +304,7 @@ safemode.addEventListener('click', () => {
     safemodebg()
 });
 
-// debug
+// Debug -------------------------------------------------------
 const del_local = document.querySelector('.del-local');
 const del_confirm = document.querySelector('.del-confirm');
 const del_yes = document.querySelector('.del-yes');
@@ -293,6 +315,7 @@ del_local.addEventListener('click', () => {
 });
 del_yes.addEventListener('click', () => {
     localStorage.clear();
+    chrome.storage.local.clear();
     location.reload();
 });
 del_no.addEventListener('click', () => {
@@ -301,15 +324,16 @@ del_no.addEventListener('click', () => {
 });
 
 // API options -------------------------------------------------------
+const apihandle = document.querySelector('.API-handle');
+
 const api_picrew = document.getElementById('api_picrew');
 const picre_box = document.querySelector('.picre')
 const picre_changewall = document.getElementById('picre-changewall');
 const picre_pixiv = document.getElementById('picre-pixiv');
 const picre_download = document.getElementById('picre-download');
-const apihandle = document.querySelector('.API-handle');
+
 const localimage = document.getElementById('api_local');
 const localimagebox = document.querySelector('.localimage');
-const background_blur = document.querySelector('.background_blur');
 
 const api_picsum = document.getElementById('api_picsum');
 const picsum_box = document.querySelector('.picsum')
@@ -333,7 +357,6 @@ chrome.storage.local.get('imgdata', (data) => {
         }
     }
 });
-
 choose_API.addEventListener('click', () => {
     API_select_box.classList.toggle('shown');
 })
@@ -374,6 +397,10 @@ localimage.addEventListener('click', () => {
     }
     chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
 });
+// Local image options
+document.getElementById("pick-image").addEventListener("click", function () {
+    document.getElementById("fileInput").click();
+});
 
 // Select: Picsum Photos
 api_picsum.addEventListener('click', () => {
@@ -387,11 +414,6 @@ api_picsum.addEventListener('click', () => {
 picsum_changewall.addEventListener('click', () => {
     picsum_fetch();
 })
-
-// Local image options
-document.getElementById("pick-image").addEventListener("click", function () {
-    document.getElementById("fileInput").click();
-});
 
 document.getElementById("fileInput").addEventListener("change", function (event) {
     let file = event.target.files[0];
@@ -412,8 +434,7 @@ document.getElementById("fileInput").addEventListener("change", function (event)
     }
 });
 
-
-// Select: Anime Wallpapers
+// Select: Picrew
 api_picrew.addEventListener('click', () => {
     API_name.innerText = api_picrew.innerText;
     API_select_box.classList.remove('shown');
@@ -421,7 +442,7 @@ api_picrew.addEventListener('click', () => {
     picre_box.classList.toggle('shown');
     picrew_fetch();
 });
-// Anime Wallpapers options
+// Picrew options
 picre_changewall.addEventListener('click', () => {
     picre_changewall.innerText = 'Đang đổi hình nền...';
     loader.style.opacity = 1
@@ -442,7 +463,9 @@ picre_pixiv.addEventListener('click', () => {
 
 // Lorem Picsum: Fetch
 function picsum_fetch() {
-    apihandle.style.opacity = 0.4
+    apihandle.style.opacity = 0.5
+    sliderbox.style.opacity = 0.5
+    sliderbox.style.pointerEvents = 'none'
     loader.style.opacity = 1
     picsum_changewall.innerText = 'Đang đổi hình nền...';
     apihandle.style.pointerEvents = 'none'
@@ -465,10 +488,12 @@ function picsum_fetch() {
         })
 }
 
-// Anime Wallpapers: Fetch
+// Picrew: Fetch
 function picrew_fetch() {
-    apihandle.style.opacity = 0.4
+    apihandle.style.opacity = 0.5
     apihandle.style.pointerEvents = 'none'
+    sliderbox.style.opacity = 0.5
+    sliderbox.style.pointerEvents = 'none'
     picre_changewall.innerText = 'Đang đổi hình nền...';
     fetch('https://pic.re/image.json')
         .then(response => response.json())
@@ -507,15 +532,19 @@ function loadImage() {
         previewImage.style.display = 'block'
 
         // pic.re
-        if (data.API_name == 'Anime Wallpapers') {
+        if (data.API_name == 'Picrew') {
             apihandle.style.opacity = 1
             apihandle.style.pointerEvents = 'auto'
+            sliderbox.style.opacity = 1
+            sliderbox.style.pointerEvents = 'auto'
             picre_changewall.innerText = 'Đổi hình nền';
         }
         // Picsum
         if (data.API_name == 'Lorem Picsum') {
             apihandle.style.opacity = 1
             apihandle.style.pointerEvents = 'auto'
+            sliderbox.style.opacity = 1
+            sliderbox.style.pointerEvents = 'auto'
             picsum_changewall.innerText = 'Đổi hình nền';
         }
     });
@@ -564,12 +593,23 @@ function saveSettings() {
         fullview: fullview.checked,
         bganim: move_bg_toggle.checked,
         safemode: safemode.checked,
-        tabTitle: tabtitle.value
+        tabTitle: tabtitle.value,
+        cache: 0
     };
     localStorage.setItem('settings', JSON.stringify(settings));
 }
+
+
 if (localStorage.getItem('settings') == null) {
     saveSettings()
+}
+if (cache.cache != day().day) {
+    getWeather(loc4tion)
+} else {
+    weathertext.innerText = cache.weather_cache.weather
+    temp.innerText = cache.weather_cache.temp
+    weathericon.style.backgroundImage = `url(${cache.weather_cache.icon})`
+    lunar.innerText = cache.lunar_cache
 }
 
 // Load settings from localStorage

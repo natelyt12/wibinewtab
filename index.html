@@ -38,7 +38,7 @@
                     <div class="icon"></div>
                     <p class="temp">__</p>
                 </div>
-                <p class="weather">Đang lấy dữ liệu</p>
+                <p class="weather">Fetching...</p>
             </div>
             <div class="search">
                 <input type="text" id="search" autocomplete="off" name="search" placeholder="Tìm kiếm [Nhập bất kỳ]">
@@ -101,13 +101,15 @@
         <div class="bg-settings setting-tabs">
             <div class="tab-title">Cài đặt hình nền</div>
             <div class="tab-content">
-                <!-- Brightness -->
-                <label for="opacity-slider">Độ sáng: <span id="opacity-value">100%</span></label>
-                <input type="range" id="opacity-slider" min="20" max="100" value="100">
-                <!-- Bg position -->
-                <label for="bgpos-slider">Y: <span id="bgpos-value">0%</span></label>
-                <input type="range" id="bgpos-slider" min="0" max="100" value="50">
-                <button id="bgpos-center">Căn giữa</button>
+                <div class="slider">
+                    <!-- Brightness -->
+                    <label for="opacity-slider">Độ sáng: <span id="opacity-value">100%</span></label>
+                    <input type="range" id="opacity-slider" min="20" max="100" value="100">
+                    <!-- Bg position -->
+                    <label for="bgpos-slider">Y: <span id="bgpos-value">0%</span></label>
+                    <input type="range" id="bgpos-slider" min="0" max="100" value="50">
+                    <button id="bgpos-center">Căn giữa</button>
+                </div>
                 <!-- Fullscreen -->
                 <div class="checkbox">
                     <input type="checkbox" class="checksvg" id="fullview" style="display: none;">
@@ -159,33 +161,34 @@
         </div>
 
         <div class="setting-tabs">
-            <div class="tab-title">Khác</div>
+            <div class="tab-title">Gỡ lỗi</div>
             <div class="tab-content">
                 <button class="del-local">Đặt lại</button>
                 <div class="del-confirm">
-                    <p style="padding: 0;margin: 0;text-align: center;font-size: 0.8em;">Mục chọn API hình nền sẽ không bị đặt lại, tùy chọn này sẽ chỉ đặt lại cài đặt của bạn, tiếp tục?</p>
+                    <p style="padding: 0;margin: 0;text-align: center;font-size: 0.8em;">Đặt lại tất cả về mặc định chứ?</p>
                     <button class="del-yes">OK</button>
                     <button class="del-no">Không</button>
                 </div>
+                <p style="opacity: 0.5;font-size: 0.8em;margin: 0;padding: 0;">Last fetch: <span id="cache_status">NaN</span></p>
             </div>
         </div>
 
         <div class="info setting-tabs">
             <div class="tab-title">Info</div>
-            <div class="tab-content">
-                <p style="font-size: 1.2em;">Wibi New Tab <span style="font-size: 0.7em;">v1.5</span></p>
+            <div class="tab-content" style="font-size: 0.9em;">
+                <p style="font-size: 1.2em;">Wibi New Tab <span style="font-size: 0.7em;">v1.6</span></p>
                 <p>By @Phucthanhh</p>
-                <p style="font-size: 0.9em;">Lấy cảm hứng từ Phigros UI, tối giản, giới thiệu hình nền.</p>
+                <p>Lấy cảm hứng từ Phigros UI, tối giản, giới thiệu hình nền.</p>
                 <hr>
                 <p>
-                    Ctrl + Z để mở/đóng menu <br>
-                    Hãy để thu phóng trang 90% hoặc 80% để có một cái nhìn tốt hơn
+                    Ctrl + Z để mở/đóng menu
                 </p>
                 <hr>
-                <p style="font-size: 0.8em;">All the API used in this project: <br>
+                <p>All the API used in this project: <br>
                     Anime Walls: <a href="https://pic.re">Pic.re</a><br>
-                    Weather: <a href="https://openweathermap.org">OpenWeatherMap</a><br>
-                    Âm lịch: <a href="https://open.oapi.vn/date/convert-to-lunar">Âm lịch</a>
+                    Weather: <a href="https://wttr.in">Wttr Weather</a><br>
+                    Âm lịch: <a href="#">Âm lịch</a><br>
+                    Lorem Picsum: <a href="https://picsum.photos">Lorem Picsum</a><br>
                 </p>
             </div>
         </div>
