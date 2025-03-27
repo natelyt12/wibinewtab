@@ -1,1 +1,1 @@
-Newtab tùy chỉnh, tối giản của Natelyt
+readme? i don't need that
