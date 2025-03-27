@@ -136,28 +136,35 @@ function nunar() {
 const weathericon = document.querySelector('.icon')
 const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
-const loc4tion = 'Halong'
+const weather_input = document.getElementById('weather-input')
 const weatherDescMap = {
     "Sunny": "Trời nắng",
     "Clear": "Trời quang đãng",
-    "Partly Cloudy": "Ít mây",
+    "Partly cloudy": "Ít mây",
     "Cloudy": "Nhiều mây",
     "Overcast": "Mây đen u ám",
     "Light rain": "Mưa nhỏ",
     "Heavy rain": "Mưa lớn",
-    "Mist": "Sương mù"
+    "Fog": "Sương mù"
 };
 
 const weatherIconMap = {
     "Sunny": "01d_t@2x.png",
     "Clear": "01d_t@2x.png",
-    "Partly Cloudy": "02d_t@2x.png",
+    "Partly cloudy": "02d_t@2x.png",
     "Cloudy": "03d_t@2x.png",
     "Overcast": "04d_t@2x.png",
     "Light rain": "10d_t@2x.png",
     "Heavy rain": "09d_t@2x.png",
-    "Mist": "50d_t@2x.png"
+    "Fog": "50d_t@2x.png"
 };
+
+weather_input.addEventListener('change', () => {
+    if (weather_input.value == '') {
+        weather_input.value = "Hà Nội"
+    }
+    getWeather(weather_input.value)
+})
 
 function getWeather(city) {
     fetch(`https://wttr.in/${city}?format=j1`)
@@ -341,9 +348,7 @@ safemode.addEventListener('click', () => {
 
 // Debug -------------------------------------------------------
 const del_local = document.querySelector('.del-local');
-const del_confirm = document.querySelector('.del-confirm');
-const del_yes = document.querySelector('.del-yes');
-const del_no = document.querySelector('.del-no');
+const clear_cache = document.querySelector('.clear-cache');
 del_local.addEventListener('click', () => {
     showalert('Đặt lại toàn bộ cài đặt?').then((userConfirmed) => {
         if (userConfirmed) {
@@ -355,6 +360,14 @@ del_local.addEventListener('click', () => {
         }
     });
 });
+clear_cache.addEventListener('click', () => {
+    showalert('Xóa cache?').then((userConfirmed) => {
+        if (userConfirmed) {
+            localStorage.removeItem('cache');
+            location.reload();
+        }
+    });
+})
 
 // API options -------------------------------------------------------
 const apihandle = document.querySelector('.API-handle');
@@ -470,7 +483,7 @@ document.getElementById("fileInput").addEventListener("change", function (event)
 // Select: Picrew
 api_picrew.addEventListener('click', async () => {
     const userConfirmed = await showalert(
-        'Bạn có thể gặp phải những hình ảnh chứa nội dung không phù hợp với một số đối tượng (16+), mặc dù nó không chứa NSFW. Bạn có chắc chắn muốn tiếp tục?\nBạn có thể bấm Ctrl + X để bật chế độ an toàn.'
+        'Bạn có thể gặp phải những hình ảnh chứa nội dung không phù hợp với một số đối tượng (17+), mặc dù nó không chứa NSFW. Bạn có chắc chắn muốn tiếp tục?\nBạn có thể bấm Ctrl + X để bật chế độ an toàn.'
     );
 
     if (userConfirmed) {
@@ -633,7 +646,7 @@ function saveSettings() {
         bganim: move_bg_toggle.checked,
         safemode: safemode.checked,
         tabTitle: tabtitle.value,
-        cache: 0
+        location: weather_input.value
     };
     localStorage.setItem('settings', JSON.stringify(settings));
 }
@@ -661,6 +674,7 @@ function loadSettings() {
         safemode.checked = settings.safemode;
         tabtitle.value = settings.tabTitle;
         move_bg_toggle.checked = settings.bganim
+        weather_input.value = settings.location
 
         // Apply settings
         image.style.opacity = opacitySlider.value / 100;
@@ -688,4 +702,5 @@ fullview.addEventListener('click', saveSettings);
 safemode.addEventListener('click', saveSettings);
 tabtitle.addEventListener('change', saveSettings);
 move_bg_toggle.addEventListener('click', saveSettings);
+weather_input.addEventListener('change', saveSettings);
 
