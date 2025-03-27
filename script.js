@@ -23,9 +23,14 @@ let settingstate = false;
 const API_name = document.querySelector('.API-name');
 const api_none = document.getElementById('api_none');
 
-// Error handler
+// Error and alert handler
 const errorDisplay = document.querySelector('.error-display');
 const errorText = document.getElementById('error-text');
+const alertBg = document.querySelector('.alert-box-bg');
+const alertBox = document.querySelector('.alert-box');
+const alertContent = document.getElementById('alert-content');
+const alertClose = document.querySelector('.alert-close');
+const alertProceed = document.querySelector('.alert-proceed');
 
 window.onerror = function (message, source, lineno, colno, error) {
     errorDisplay.style.display = 'block';
@@ -36,6 +41,39 @@ window.onerror = function (message, source, lineno, colno, error) {
 // }
 // triggerError();
 
+function showalert(content) {
+    alertContent.innerText = content;
+    alertBg.style.display = 'block';
+    setTimeout(() => {
+        alertBox.style.opacity = 1;
+        alertBg.style.opacity = 1;
+        alertBox.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 10);
+
+    return new Promise((resolve) => {
+        alertProceed.addEventListener('click', () => {
+            alertBox.style.opacity = 0;
+            alertBox.style.transform = 'translate(-50%, -50%) scale(0.7)';
+            alertBg.style.opacity = 0;
+            setTimeout(() => {
+                alertBg.style.display = 'none';
+            }, 300);
+            resolve(true);
+        }, { once: true });
+
+        alertClose.addEventListener('click', () => {
+            alertBox.style.opacity = 0;
+            alertBox.style.transform = 'translate(-50%, -50%) scale(0.7)';
+            alertBg.style.opacity = 0;
+            setTimeout(() => {
+                alertBg.style.display = 'none';
+            }, 300);
+            resolve(false);
+        }, { once: true });
+    });
+}
+
+// Cache stuff -------------------------------------------------------
 if (localStorage.getItem('cache') == null) {
     let cache = {
         "cache": 0,
@@ -101,6 +139,7 @@ const temp = document.querySelector('.temp')
 const loc4tion = 'Halong'
 const weatherDescMap = {
     "Sunny": "Trời nắng",
+    "Clear": "Trời quang đãng",
     "Partly Cloudy": "Ít mây",
     "Cloudy": "Nhiều mây",
     "Overcast": "Mây đen u ám",
@@ -111,6 +150,7 @@ const weatherDescMap = {
 
 const weatherIconMap = {
     "Sunny": "01d_t@2x.png",
+    "Clear": "01d_t@2x.png",
     "Partly Cloudy": "02d_t@2x.png",
     "Cloudy": "03d_t@2x.png",
     "Overcast": "04d_t@2x.png",
@@ -172,11 +212,6 @@ clearsearch.addEventListener('click', () => {
 document.addEventListener('click', (event) => {
     if (!searchcontainer.contains(event.target) && !searchbox.contains(event.target)) {
         normsearchstate()
-    }
-    if (!setting.contains(event.target) && !settingBtn.contains(event.target)) {
-        setting.classList.remove('active');
-        settingBtn.classList.remove('active2');
-        settingstate = false;
     }
 });
 document.addEventListener('keydown', (event) => {
@@ -310,17 +345,15 @@ const del_confirm = document.querySelector('.del-confirm');
 const del_yes = document.querySelector('.del-yes');
 const del_no = document.querySelector('.del-no');
 del_local.addEventListener('click', () => {
-    del_confirm.classList.toggle('shown');
-    del_local.style.display = 'none';
-});
-del_yes.addEventListener('click', () => {
-    localStorage.clear();
-    chrome.storage.local.clear();
-    location.reload();
-});
-del_no.addEventListener('click', () => {
-    del_confirm.classList.remove('shown');
-    del_local.style.display = 'block';
+    showalert('Đặt lại toàn bộ cài đặt?').then((userConfirmed) => {
+        if (userConfirmed) {
+            setTimeout(() => {
+                localStorage.clear();
+                chrome.storage.local.clear();
+                location.reload();
+            }, 600);
+        }
+    });
 });
 
 // API options -------------------------------------------------------
@@ -435,12 +468,18 @@ document.getElementById("fileInput").addEventListener("change", function (event)
 });
 
 // Select: Picrew
-api_picrew.addEventListener('click', () => {
-    API_name.innerText = api_picrew.innerText;
-    API_select_box.classList.remove('shown');
-    closeall()
-    picre_box.classList.toggle('shown');
-    picrew_fetch();
+api_picrew.addEventListener('click', async () => {
+    const userConfirmed = await showalert(
+        'Bạn có thể gặp phải những hình ảnh chứa nội dung không phù hợp với một số đối tượng (16+), mặc dù nó không chứa NSFW. Bạn có chắc chắn muốn tiếp tục?\nBạn có thể bấm Ctrl + X để bật chế độ an toàn.'
+    );
+
+    if (userConfirmed) {
+        API_name.innerText = api_picrew.innerText;
+        API_select_box.classList.remove('shown');
+        closeall();
+        picre_box.classList.toggle('shown');
+        picrew_fetch();
+    }
 });
 // Picrew options
 picre_changewall.addEventListener('click', () => {
@@ -502,7 +541,7 @@ function picrew_fetch() {
             let imgurl = 'https://' + data.file_url
             compressImageFromURL(imgurl, 0.8, (compressedBase64) => {
                 let imgdata = {
-                    "API_name": "Picrew",
+                    "API_name": "Picre",
                     "API_class": "picre",
                     "url": compressedBase64,
                     "cdnurl": imgurl,
@@ -532,7 +571,7 @@ function loadImage() {
         previewImage.style.display = 'block'
 
         // pic.re
-        if (data.API_name == 'Picrew') {
+        if (data.API_name == 'Picre') {
             apihandle.style.opacity = 1
             apihandle.style.pointerEvents = 'auto'
             sliderbox.style.opacity = 1
