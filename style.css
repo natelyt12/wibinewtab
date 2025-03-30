@@ -728,3 +728,7 @@ hr {
     margin: 0;
     padding: 0;
 }
+
+.local-video{
+    display: none;
+}

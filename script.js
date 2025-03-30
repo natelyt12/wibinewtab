@@ -36,10 +36,9 @@ window.onerror = function (message, source, lineno, colno, error) {
     errorDisplay.style.display = 'block';
     errorText.innerText = `Error: ${message} at ${source}:${lineno}:${colno}`;
 };
-// function triggerError() {
-//     throw new Error("This is a test error");
-// }
-// triggerError();
+function triggerError(message) {
+    throw new Error(message);
+}
 
 function showalert(content) {
     alertContent.innerText = content;
@@ -83,7 +82,7 @@ if (localStorage.getItem('cache') == null) {
     localStorage.setItem('cache', JSON.stringify(cache))
 }
 const cache = JSON.parse(localStorage.getItem('cache'))
-document.getElementById('cache_status').innerText = `${day().day}/${day().month}`
+document.getElementById('cache_status').innerText = `${getClock().hours}:${getClock().minutes} ${day().day}/${day().month}`
 
 // Time stuff -------------------------------------------------------
 function getClock() {
@@ -92,6 +91,10 @@ function getClock() {
     const minutes = now.getMinutes();
     const time = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
     clock.innerText = time;
+    return {
+        "hours": hours,
+        "minutes": minutes
+    }
 }
 getClock()
 setInterval(getClock, 5000);
@@ -145,7 +148,8 @@ const weatherDescMap = {
     "Overcast": "Mây đen u ám",
     "Light rain": "Mưa nhỏ",
     "Heavy rain": "Mưa lớn",
-    "Fog": "Sương mù"
+    "Fog": "Sương mù",
+    "Patchy rain nearby": "Mưa rào rải rác",
 };
 
 const weatherIconMap = {
@@ -156,7 +160,8 @@ const weatherIconMap = {
     "Overcast": "04d_t@2x.png",
     "Light rain": "10d_t@2x.png",
     "Heavy rain": "09d_t@2x.png",
-    "Fog": "50d_t@2x.png"
+    "Fog": "50d_t@2x.png",
+    "Patchy rain nearby": "09d_t@2x.png"
 };
 
 weather_input.addEventListener('change', () => {
@@ -313,12 +318,13 @@ function checkfullview() {
         image.style.backgroundSize = 'contain';
         movebgtoggle.style.display = 'block';
         background_blur.style.display = 'block';
-        sliderbox.style.opacity = '0.5';
-        sliderbox.style.pointerEvents = 'none';
         opacitySlider.value = 100
         opacitySlider.dispatchEvent(new Event('input'));
         bgposSlider.value = 50
         bgposSlider.dispatchEvent(new Event('input'));
+        sliderbox.style.opacity = '0.5';
+        sliderbox.style.pointerEvents = 'none';
+
     } else {
         image.style.backgroundSize = 'cover';
         movebgtoggle.style.display = 'none';
@@ -361,7 +367,7 @@ del_local.addEventListener('click', () => {
     });
 });
 clear_cache.addEventListener('click', () => {
-    showalert('Xóa cache?').then((userConfirmed) => {
+    showalert('Fetch lại thông tin?').then((userConfirmed) => {
         if (userConfirmed) {
             localStorage.removeItem('cache');
             location.reload();
@@ -384,8 +390,12 @@ const localimagebox = document.querySelector('.localimage');
 const api_picsum = document.getElementById('api_picsum');
 const picsum_box = document.querySelector('.picsum')
 const picsum_changewall = document.getElementById('picsum-changewall');
+const picsum_download = document.getElementById('picsum-download');
 
 // Get API status when load the page
+if (chrome.storage == undefined) {
+    showalert('Tab mới không thể hoạt động bằng cách này. Hãy thử mở nó bằng cách sử dụng extension.')
+}
 chrome.storage.local.get('imgdata', (data) => {
     if (data.imgdata == undefined) {
         API_name.innerText = 'Không có';
@@ -403,6 +413,7 @@ chrome.storage.local.get('imgdata', (data) => {
         }
     }
 });
+
 choose_API.addEventListener('click', () => {
     API_select_box.classList.toggle('shown');
 })
@@ -412,6 +423,7 @@ function closeall() {
     picre_box.classList.remove('shown');
     localimagebox.classList.remove('shown');
     picsum_box.classList.remove('shown');
+    video_box.classList.remove('shown');
 }
 
 // Select: No API
@@ -460,6 +472,15 @@ api_picsum.addEventListener('click', () => {
 picsum_changewall.addEventListener('click', () => {
     picsum_fetch();
 })
+picsum_download.addEventListener('click', () => {
+    chrome.storage.local.get('imgdata', (data) => {
+        data = JSON.parse(data.imgdata);
+        let link = document.createElement('a');
+        link.href = data.url;
+        link.download = 'background.jpg'; // Tên file khi tải về
+        link.click();
+    });
+});
 
 document.getElementById("fileInput").addEventListener("change", function (event) {
     let file = event.target.files[0];
@@ -521,7 +542,7 @@ function picsum_fetch() {
     loader.style.opacity = 1
     picsum_changewall.innerText = 'Đang đổi hình nền...';
     apihandle.style.pointerEvents = 'none'
-    fetch('https://picsum.photos/1920/1080.webp')
+    fetch('https://picsum.photos/2560/1440.webp')
         .then(response => response.blob())
         .then(blob => {
             let reader = new FileReader();
@@ -655,14 +676,6 @@ function saveSettings() {
 if (localStorage.getItem('settings') == null) {
     saveSettings()
 }
-if (cache.cache != day().day) {
-    getWeather(weather_input.value)
-} else {
-    weathertext.innerText = cache.weather_cache.weather
-    temp.innerText = cache.weather_cache.temp
-    weathericon.style.backgroundImage = `url(${cache.weather_cache.icon})`
-    lunar.innerText = cache.lunar_cache
-}
 
 // Load settings from localStorage
 function loadSettings() {
@@ -675,6 +688,14 @@ function loadSettings() {
         tabtitle.value = settings.tabTitle;
         move_bg_toggle.checked = settings.bganim
         weather_input.value = settings.location
+        if (cache.cache != day().day) {
+            getWeather(weather_input.value)
+        } else {
+            weathertext.innerText = cache.weather_cache.weather
+            temp.innerText = cache.weather_cache.temp
+            weathericon.style.backgroundImage = `url(${cache.weather_cache.icon})`
+            lunar.innerText = cache.lunar_cache
+        }
 
         // Apply settings
         image.style.opacity = opacitySlider.value / 100;
@@ -703,4 +724,3 @@ safemode.addEventListener('click', saveSettings);
 tabtitle.addEventListener('change', saveSettings);
 move_bg_toggle.addEventListener('click', saveSettings);
 weather_input.addEventListener('change', saveSettings);
-
