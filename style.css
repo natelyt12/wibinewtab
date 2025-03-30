@@ -24,6 +24,11 @@ button {
     width: 100%;
     text-decoration: none;
     cursor: pointer;
+    border-radius: 5px;
+}
+
+.API-option {
+    border-radius: 0px;
 }
 
 button:hover {
@@ -46,6 +51,7 @@ input[type="text"] {
     outline: none;
     padding: 5px 8px;
     margin: 2px 0;
+    border-radius: 5px;
 }
 
 /* From Uiverse.io by satyamchaudharydev */
@@ -205,7 +211,7 @@ input[type="text"] {
     top: 0;
     /* filter: blur(5px); */
     transition: all 1.5s cubic-bezier(0.190, 1.000, 0.220, 1.000);
-    opacity: 0.3;
+    opacity: 0.5;
     background-size: cover;
     background-position: center 50%;
     width: 100%;
@@ -307,15 +313,17 @@ input[type="range"]:hover {
 }
 
 .tab-title {
-    font-size: 1zem;
+    font-size: 1em;
     text-align: center;
-    padding: 0;
+    padding: 1px 0;
     background-color: black;
+    border-radius: 5px 5px 0 0;
 }
 
 .setting-tabs {
     margin: 2.5px 0 2.5px 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
 }
 
 .tab-content {
@@ -362,7 +370,7 @@ input[type="range"]:hover {
 
 .info p {
     font-size: 0.9em;
-    opacity: 0.5;
+    opacity: 0.8;
     padding: 0;
     margin: 0;
 }
@@ -701,13 +709,12 @@ hr {
     width: 300px;
     transform: translate(-50%, -50%);
     background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px 5px 4px 5px;
-    border: 1px solid black;
     color: white;
     z-index: 101;
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
     transition: 0.5s cubic-bezier(0.230, 1.000, 0.320, 1.000);
+    border-radius: 5px;
 }
 
 .alert-title {
@@ -716,11 +723,16 @@ hr {
     margin: 0;
     padding: 0;
     background-color: #000;
+    border-radius: 5px 5px 0 0;
+}
+
+.alert-content{
+    margin: 0px 8px 8px 8px;
 }
 
 #alert-content {
     font-size: 0.9em;
-    text-align: left;
+    text-align: center;
     padding: 5px;
 }
 
@@ -729,6 +741,6 @@ hr {
     padding: 0;
 }
 
-.local-video{
-    display: none;
+hr{
+    opacity: 0.5;
 }

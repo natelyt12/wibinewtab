@@ -414,6 +414,7 @@ chrome.storage.local.get('imgdata', (data) => {
     }
 });
 
+const API_arrow = document.querySelector('.API-arrow');
 choose_API.addEventListener('click', () => {
     API_select_box.classList.toggle('shown');
 })
@@ -423,7 +424,6 @@ function closeall() {
     picre_box.classList.remove('shown');
     localimagebox.classList.remove('shown');
     picsum_box.classList.remove('shown');
-    video_box.classList.remove('shown');
 }
 
 // Select: No API
@@ -504,7 +504,7 @@ document.getElementById("fileInput").addEventListener("change", function (event)
 // Select: Picrew
 api_picrew.addEventListener('click', async () => {
     const userConfirmed = await showalert(
-        'Bạn có thể gặp phải những hình ảnh chứa nội dung không phù hợp với một số đối tượng (17+), mặc dù nó không chứa NSFW. Bạn có chắc chắn muốn tiếp tục?\nBạn có thể bấm Ctrl + X để bật chế độ an toàn.'
+        'Bạn có thể gặp phải những hình ảnh chứa nội dung không phù hợp với một số đối tượng (17+), mặc dù nó không chứa NSFW. Bạn có chắc chắn muốn tiếp tục?\nBạn có thể bấm Ctrl + X để bật Safe mode.'
     );
 
     if (userConfirmed) {
