@@ -724,3 +724,9 @@ safemode.addEventListener('click', saveSettings);
 tabtitle.addEventListener('change', saveSettings);
 move_bg_toggle.addEventListener('click', saveSettings);
 weather_input.addEventListener('change', saveSettings);
+
+
+// Check version
+const version = document.getElementById('version');
+const manifest = chrome.runtime.getManifest();
+version.innerText = `v${manifest.version}`;
