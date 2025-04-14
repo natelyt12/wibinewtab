@@ -204,32 +204,18 @@ input[type="text"] {
     transition: all 1.5s cubic-bezier(0.190, 1.000, 0.220, 1.000);
     opacity: 0;
     filter: blur(0px);
+    
 }
 
-.background_blur {
+.wavy-image{
     position: absolute;
-    top: 0;
-    /* filter: blur(5px); */
-    transition: all 1.5s cubic-bezier(0.190, 1.000, 0.220, 1.000);
-    opacity: 0.5;
-    background-size: cover;
-    background-position: center 50%;
-    width: 100%;
-    height: 100%;
-    animation: movingupdwon 20s alternate infinite ease-in-out;
-    animation-play-state: paused;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    width: 104%;
+    height: 104vh;
+    will-change: transfrom;
 }
-
-@keyframes movingupdwon {
-    0% {
-        background-position: center 0%;
-    }
-
-    100% {
-        background-position: center 100%;
-    }
-}
-
 
 .settings {
     position: absolute;

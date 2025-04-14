@@ -17,7 +17,7 @@ const bgopt = document.querySelector('.bg-settings');
 const bgposCenter = document.getElementById('bgpos-center');
 const safemode = document.getElementById('safemode');
 // settings
-const fullview = document.getElementById('fullview');
+const wavy = document.getElementById('wavy');
 let settingstate = false;
 // API
 const API_name = document.querySelector('.API-name');
@@ -82,7 +82,7 @@ if (localStorage.getItem('cache') == null) {
     localStorage.setItem('cache', JSON.stringify(cache))
 }
 const cache = JSON.parse(localStorage.getItem('cache'))
-document.getElementById('cache_status').innerText = `${getClock().hours}:${getClock().minutes} ${day().day}/${day().month}`
+document.getElementById('cache_status').innerText = `${day().day}`
 
 // Time stuff -------------------------------------------------------
 function getClock() {
@@ -300,44 +300,51 @@ bgposCenter.addEventListener('click', () => {
 
 // Full view
 const movebgtoggle = document.querySelector('.movebgtoggle');
-const move_bg_toggle = document.getElementById('move_bg_toggle');
 const background_blur = document.querySelector('.background_blur');
 const sliderbox = document.querySelector('.slider');
-function movebg() {
-    if (move_bg_toggle.checked) {
-        background_blur.style.animationPlayState = 'running';
+const wavybg = document.querySelector('.wavy-image');
+function checkwavy() {
+    if (wavy.checked) {
+        startWavy()
     } else {
-        background_blur.style.animationPlayState = 'paused';
+        pauseWavy()
     }
 }
-move_bg_toggle.addEventListener('click', () => {
-    movebg()
+wavy.addEventListener('click', () => {
+    checkwavy()
 })
-function checkfullview() {
-    if (fullview.checked) {
-        image.style.backgroundSize = 'contain';
-        movebgtoggle.style.display = 'block';
-        background_blur.style.display = 'block';
-        opacitySlider.value = 100
-        opacitySlider.dispatchEvent(new Event('input'));
-        bgposSlider.value = 50
-        bgposSlider.dispatchEvent(new Event('input'));
-        sliderbox.style.opacity = '0.5';
-        sliderbox.style.pointerEvents = 'none';
 
-    } else {
-        image.style.backgroundSize = 'cover';
-        movebgtoggle.style.display = 'none';
-        background_blur.style.display = 'none';
-        sliderbox.style.opacity = '1';
-        sliderbox.style.pointerEvents = 'auto';
-        move_bg_toggle.checked = false;
-        movebg()
-    }
+// Wavy backround
+let start = null;
+let animationId = null;
+let isPaused = false;
+
+function animate(timestamp) {
+    if (isPaused) return; // nếu pause thì không chạy nữa
+
+    if (!start) start = timestamp;
+    const elapsed = (timestamp - start) / 1000; // tính giây
+
+    const x = Math.sin(elapsed * 1.2) * 3; // trái phải
+    const y = Math.cos(elapsed * 1.5) * 3; // lên xuống
+    const rotation = Math.sin(elapsed * 0.8) * 0.5; // xoay
+
+    image.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+
+    animationId = requestAnimationFrame(animate);
 }
-fullview.addEventListener('click', () => {
-    checkfullview()
-})
+
+function startWavy() {
+    isPaused = false;
+    start = null;
+    requestAnimationFrame(animate);
+}
+
+function pauseWavy() {
+    isPaused = true;
+    cancelAnimationFrame(animationId);
+    image.style.transform = 'translate(-0%, -0%) rotate(0deg)'; // Đặt lại transform về trạng thái ban đầu
+}
 
 // Safemode
 const safemodebox = document.querySelector('.safemode-box');
@@ -454,6 +461,7 @@ localimage.addEventListener('click', () => {
         "url": ""
     }
     chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
+    document.getElementById("fileInput").click();
 });
 // Local image options
 document.getElementById("pick-image").addEventListener("click", function () {
@@ -663,8 +671,7 @@ function saveSettings() {
     const settings = {
         opacity: opacitySlider.value,
         bgpos: bgposSlider.value,
-        fullview: fullview.checked,
-        bganim: move_bg_toggle.checked,
+        wavy: wavy.checked,
         safemode: safemode.checked,
         tabTitle: tabtitle.value,
         location: weather_input.value
@@ -683,10 +690,9 @@ function loadSettings() {
     if (settings) {
         opacitySlider.value = settings.opacity;
         bgposSlider.value = settings.bgpos;
-        fullview.checked = settings.fullview;
+        wavy.checked = settings.wavy;
         safemode.checked = settings.safemode;
         tabtitle.value = settings.tabTitle;
-        move_bg_toggle.checked = settings.bganim
         weather_input.value = settings.location
         if (cache.cache != day().day) {
             getWeather(weather_input.value)
@@ -702,8 +708,7 @@ function loadSettings() {
         opacityText.innerText = opacitySlider.value + '%';
         image.style.backgroundPosition = `50% ${bgposSlider.value}%`;
         bgposText.innerText = bgposSlider.value + '%';
-        checkfullview()
-        movebg()
+        checkwavy()
         safemodebg()
         if (tabtitle.value != '') {
             document.title = tabtitle.value;
@@ -719,10 +724,9 @@ window.addEventListener('load', loadSettings);
 // Save settings whenever a setting is changed
 opacitySlider.addEventListener('input', saveSettings);
 bgposSlider.addEventListener('input', saveSettings);
-fullview.addEventListener('click', saveSettings);
+wavy.addEventListener('click', saveSettings);
 safemode.addEventListener('click', saveSettings);
 tabtitle.addEventListener('change', saveSettings);
-move_bg_toggle.addEventListener('click', saveSettings);
 weather_input.addEventListener('change', saveSettings);
 
 

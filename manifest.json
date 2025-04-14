@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Wibi New Tab",
-    "version": "1.7.2",
+    "version": "1.8",
     "description": "Trang tab mới tùy chỉnh",
     "author": "Phúc Thanhh",
     "chrome_url_overrides": {
