@@ -300,7 +300,6 @@ bgposCenter.addEventListener('click', () => {
 
 // Full view
 const movebgtoggle = document.querySelector('.movebgtoggle');
-const background_blur = document.querySelector('.background_blur');
 const sliderbox = document.querySelector('.slider');
 const wavybg = document.querySelector('.wavy-image');
 function checkwavy() {
@@ -325,9 +324,10 @@ function animate(timestamp) {
     if (!start) start = timestamp;
     const elapsed = (timestamp - start) / 1000; // tính giây
 
-    const x = Math.sin(elapsed * 1.2) * 3; // trái phải
-    const y = Math.cos(elapsed * 1.5) * 3; // lên xuống
-    const rotation = Math.sin(elapsed * 0.8) * 0.5; // xoay
+    const x = Math.sin(elapsed * 1.2) * 4; // trái phải
+    const y = Math.cos(elapsed * 1.5) * 4; // lên xuống
+    const rotation = Math.sin(elapsed * 0.8) * 0.7; // xoay
+    
 
     image.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
 
@@ -440,7 +440,6 @@ api_none.addEventListener('click', () => {
     API_select_box.classList.remove('shown');
     closeall()
     image.style.opacity = 0;
-    background_blur.style.backgroundImage = 'none';
     // Đợi fadeout hết
     setTimeout(() => {
         image.style.backgroundImage = 'none';
@@ -604,7 +603,6 @@ function loadImage() {
         let img = new Image();
         img.onload = function () {
             image.style.backgroundImage = 'url(' + img.src + ')';
-            background_blur.style.backgroundImage = 'url(' + img.src + ')';
             loader.style.opacity = 0;
             image.style.opacity = opacitySlider.value / 100;
         };
