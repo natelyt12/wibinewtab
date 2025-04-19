@@ -246,6 +246,7 @@ document.addEventListener('keydown', (event) => {
         setting.classList.toggle('active');
         settingBtn.classList.toggle('active2');
         settingstate = !settingstate;
+        checkSettingState()
     } else if (event.ctrlKey && event.key === 'x') {
         safemode.checked = !safemode.checked;
         safemode.dispatchEvent(new Event('click'));
@@ -264,7 +265,20 @@ settingBtn.addEventListener('click', () => {
     setting.classList.toggle('active');
     settingBtn.classList.toggle('active2');
     settingstate = !settingstate;
+    checkSettingState()
 });
+
+const optbtnCon = document.querySelector('.opt-btn-con');
+const optbtnImg = document.querySelector('.opt-btn-img');
+function checkSettingState() {
+    if (settingstate) {
+        optbtnCon.style.transform = 'translateX(-240px)';
+        optbtnImg.src = './image/close.png'
+    } else {
+        optbtnCon.style.transform = 'translateX(0)';
+        optbtnImg.src = './image/setting.png'
+    }
+}
 
 // Settings items -------------------------------------------------------
 // Tab title

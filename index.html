@@ -52,9 +52,11 @@
         </div>
     </div>
 
-    <button class="opt-btn">
-        <img class="opt-btn-img" src="./image/setting.png" alt="settings">
-    </button>
+    <div class="opt-btn-con">
+        <button class="opt-btn">
+            <img class="opt-btn-img" src="./image/setting.png" alt="settings">
+        </button>
+    </div>
 
     <div class="alert-box-bg">
         <div class="alert-box">
@@ -113,14 +115,14 @@
             </div>
         </div>
         <div class="bg-settings setting-tabs">
-            <div class="tab-title">Cài đặt hình nền</div>
+            <div class="tab-title">Tùy chỉnh hình nền</div>
             <div class="tab-content">
                 <div class="slider">
                     <!-- Brightness -->
                     <label for="opacity-slider">Độ sáng: <span id="opacity-value">100%</span></label>
                     <input type="range" id="opacity-slider" min="20" max="100" value="100">
                     <!-- Bg position -->
-                    <label for="bgpos-slider">Y: <span id="bgpos-value">0%</span></label>
+                    <label for="bgpos-slider">Căn chỉnh Y: <span id="bgpos-value">0%</span></label>
                     <input type="range" id="bgpos-slider" min="0" max="100" value="50">
                     <button id="bgpos-center">Căn giữa</button>
                 </div>
