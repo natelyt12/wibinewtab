@@ -46,7 +46,8 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                     style="transform: scaleX(-1);">
                     <circle cx="11" cy="11" r="7" stroke="white" stroke-width="2" />
-                    <line x1="16.65" y1="16.65" x2="21" y2="21" stroke="white" stroke-width="2" stroke-linecap="round" />
+                    <line x1="16.65" y1="16.65" x2="21" y2="21" stroke="white" stroke-width="2"
+                        stroke-linecap="round" />
                 </svg>
                 <input type="text" id="search" autocomplete="off" name="search" placeholder="Tìm kiếm [Nhập bất kỳ]">
                 <button id="clear"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -58,7 +59,7 @@
             </div>
         </div>
         <div class="safemode-box">
-            <p>Safe mode đã bật để che hình nền của bạn</p>
+            <p>Safe mode đang bật</p>
         </div>
     </div>
 
@@ -107,7 +108,8 @@
                     <button class="choose-API">
                         <p class="API-name">Chọn nguồn ảnh</p>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9L12 15L18 9" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M6 9L12 15L18 9" stroke="white" stroke-width="1" stroke-linecap="round"
+                                stroke-linejoin="round" />
                         </svg>
                     </button>
                     <div class="API-select-box">
@@ -135,7 +137,7 @@
             </div>
         </div>
         <div class="bg-settings setting-tabs">
-            <div class="tab-title">Tùy chỉnh hình nền</div>
+            <div class="tab-title">Tùy chỉnh</div>
             <div class="tab-content">
                 <div class="slider">
                     <!-- Brightness -->
@@ -159,7 +161,8 @@
                         </svg>
                     </label>
                 </div>
-
+                <p class="tooltip">Hiệu ứng rung lắc hình nền nhẹ nhàng. Nếu bật với hình nền chất lượng cao có thể gây
+                    lag với máy yếu</p>
                 <!-- Censored -->
                 <div class="checkbox">
                     <input type="checkbox" class="checksvg" id="safemode" style="display: none;">
@@ -174,6 +177,8 @@
                         </svg>
                     </label>
                 </div>
+                <p class="tooltip">Che hình nền của bạn, có thể hữu dụng nếu bạn không muốn mọi người nhìn thấy hình nền
+                    của mình khi đang trình chiếu</p>
             </div>
         </div>
 
@@ -181,6 +186,7 @@
             <div class="tab-title">Tiêu đề Tab</div>
             <div class="tab-content">
                 <input type="text" id="new-tab-title" placeholder="Enter để lưu tiêu đề">
+                <p class="tooltip">Tùy chỉnh tiêu đề ở trên thanh tab</p>
             </div>
         </div>
 
@@ -188,6 +194,8 @@
             <div class="tab-title">Thời tiết</div>
             <div class="tab-content">
                 <input type="text" id="weather-input" placeholder="Enter để lưu địa điểm" value="Hà Nội">
+                <p class="tooltip">Nhập địa điểm của bạn ở đây để lấy dữ liệu thời tiết tại địa điểm đó. Địa điểm có thể
+                    không chính xác</p>
             </div>
         </div>
 
@@ -195,7 +203,9 @@
             <div class="tab-title">Gỡ lỗi</div>
             <div class="tab-content">
                 <button class="del-local">Đặt lại</button>
+                <p class="tooltip">Đặt lại tất cả cài đặt về mặc định</p>
                 <button class="clear-cache">Fetch lại thông tin</button>
+                <p class="tooltip">Lấy lại thông tin tời tiết và Âm Lịch nếu có lỗi</p>
                 <p style="opacity: 0.5;font-size: 0.8em;margin: 0;padding: 0;">Cache day: <span
                         id="cache_status">NaN</span></p>
             </div>
@@ -203,9 +213,9 @@
 
         <div class="info setting-tabs">
             <div class="tab-title">Info</div>
-            <div class="tab-content" style="font-size: 0.9em">
-                <p style="font-size: 1.2em;">Wibi New Tab <span id="version" style="font-size: 0.7em;"></span></p>
-                <p>By @Phucthanhh</p>
+            <div class="tab-content">
+                <p style="font-size: 1.4em; width: 100%; text-align: center; font-family: Lexend, serif;">wibi New Tab <span id="version" style="font-size: 0.7em;"></span></p>
+                <p style="width: 100%; text-align: center; font-style: italic;">By @Phucthanhh</p>
                 <p>Lấy cảm hứng từ Phigros UI, tối giản, giới thiệu hình nền.</p>
                 <hr>
                 <p>

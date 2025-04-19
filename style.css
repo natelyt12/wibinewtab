@@ -222,7 +222,6 @@ svg{
     transition: all 1.5s cubic-bezier(0.190, 1.000, 0.220, 1.000);
     opacity: 0;
     filter: blur(0px);
-    
 }
 
 .wavy-image{
@@ -668,6 +667,7 @@ hr {
     z-index: 100;
     transition: 0.5s cubic-bezier(0.230, 1.000, 0.320, 1.000);
     display: none;
+    opacity: 0;
 }
 
 .alert-box {
@@ -716,4 +716,11 @@ hr{
 .slider{
     display: flex;
     flex-direction: column;
+}
+
+.tooltip{
+    opacity: 0.5;
+    font-size: 0.8em;
+    padding: 0;
+    margin: 0;
 }

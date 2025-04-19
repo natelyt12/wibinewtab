@@ -543,7 +543,7 @@ document.getElementById("fileInput").addEventListener("change", function (event)
 // Select: Picrew
 api_picrew.addEventListener('click', async () => {
     const userConfirmed = await showalert(
-        'Bạn có thể gặp phải những hình ảnh chứa nội dung không phù hợp với một số đối tượng (17+), mặc dù nó không chứa NSFW. Bạn có chắc chắn muốn tiếp tục?\nBạn có thể bấm Ctrl + X để bật Safe mode.'
+        'Bạn có thể gặp phải những hình ảnh chứa nội dung nhạy cảm (sensitive content), mặc dù nó không phải NSFW. Bạn có chắc chắn muốn tiếp tục?'
     );
 
     if (userConfirmed) {
