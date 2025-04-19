@@ -107,12 +107,12 @@ function day() {
     const fullDate = today.toLocaleDateString('vi-VN', {
         weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
     });
-    date.innerText = fullDate;
     lunarconvert = {
         "day": day,
         "month": month,
         "year": year
     }
+    date.innerText = fullDate;
     return lunarconvert
 }
 
@@ -128,7 +128,7 @@ function nunar() {
         .then(response => response.json())
         .then(data => {
             let d = data.data
-            lunar.innerText = `Âm lịch: Ngày ${d.day} tháng ${d.month} năm ${d.sexagenaryCycle}`
+            lunar.innerText = `Âm lịch: ${d.day} tháng ${d.month} năm ${d.sexagenaryCycle}`
             cache.lunar_cache = lunar.innerText
             localStorage.setItem('cache', JSON.stringify(cache))
         })
@@ -202,19 +202,31 @@ function getWeather(city) {
 const searchbox = document.getElementById('search')
 const searchcontainer = document.querySelector('.search')
 const clearsearch = document.getElementById('clear')
+function focusonsearch() {
+    searchbox.style.width = '500px'
+    searchbox.style.transition = '0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000)'
+    clearsearch.style.display = 'flex'
+    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Enter để tìm]'
+    searchbox.style.fontSize = '1.2em'
+}
+function normsearchstate() {
+    searchbox.style.width = '230px';
+    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Nhập bất kỳ]';
+    clearsearch.style.display = 'none'
+    searchbox.blur()
+    searchbox.style.fontSize = '0.8em'
+}
 searchbox.addEventListener('keypress', () => {
     if (searchbox.value.length >= 0) {
-        searchbox.style.width = '500px'
-        searchbox.style.transition = '0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000)'
-        clearsearch.style.display = 'block'
-        document.getElementsByName('search')[0].placeholder = 'Tìm kiếm'
-        searchbox.style.fontSize = '1.2em'
+        focusonsearch()
     }
     if (event.key === 'Enter') {
         window.open(`https://www.google.com/search?q=${searchbox.value}`, "_self")
     }
 })
-
+searchbox.addEventListener('focus', () => {
+    focusonsearch()
+})
 clearsearch.addEventListener('click', () => {
     searchbox.value = ''
     searchbox.focus()
@@ -231,13 +243,6 @@ document.addEventListener('keydown', (event) => {
         normsearchstate()
     }
 })
-function normsearchstate() {
-    searchbox.style.width = '230px';
-    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Nhập bất kỳ]';
-    clearsearch.style.display = 'none'
-    searchbox.blur()
-    searchbox.style.fontSize = '0.8em'
-}
 
 
 // Hotkeys -------------------------------------------------------
@@ -269,14 +274,27 @@ settingBtn.addEventListener('click', () => {
 });
 
 const optbtnCon = document.querySelector('.opt-btn-con');
-const optbtnImg = document.querySelector('.opt-btn-img');
+const optbtn = document.querySelector('.opt-btn');
 function checkSettingState() {
     if (settingstate) {
         optbtnCon.style.transform = 'translateX(-240px)';
-        optbtnImg.src = './image/close.png'
+        optbtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <line x1="4" y1="4" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round" />
+                        <line x1="20" y1="4" x2="4" y2="20" stroke="white" stroke-width="2" stroke-linecap="round" />
+                        </svg>`
+        optbtn.style.transform = 'rotate(-90deg) scale(0.8)'
     } else {
         optbtnCon.style.transform = 'translateX(0)';
-        optbtnImg.src = './image/setting.png'
+        optbtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" 
+                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" 
+                            stroke="white" stroke-width="2"/>
+                            <path d="M19.43 12.98C19.47 12.66 19.5 12.33 19.5 12C19.5 11.67 19.47 11.34 19.43 11.02L21.54 9.37C21.73 9.22 21.78 8.95 21.66 8.73L19.66 5.27C19.54 5.05 19.28 4.97 19.06 5.06L16.56 6.06C16.04 5.65 15.47 5.31 14.85 5.06L14.5 2.39C14.47 2.17 14.28 2 14.05 2H9.95C9.72 2 9.53 2.17 9.5 2.39L9.15 5.06C8.53 5.31 7.96 5.65 7.44 6.06L4.94 5.06C4.72 4.97 4.46 5.05 4.34 5.27L2.34 8.73C2.22 8.95 2.27 9.22 2.46 9.37L4.57 11.02C4.53 11.34 4.5 11.67 4.5 12C4.5 12.33 4.53 12.66 4.57 12.98L2.46 14.63C2.27 14.78 2.22 15.05 2.34 15.27L4.34 18.73C4.46 18.95 4.72 19.03 4.94 18.94L7.44 17.94C7.96 18.35 8.53 18.69 9.15 18.94L9.5 21.61C9.53 21.83 9.72 22 9.95 22H14.05C14.28 22 14.47 21.83 14.5 21.61L14.85 18.94C15.47 18.69 16.04 18.35 16.56 17.94L19.06 18.94C19.28 19.03 19.54 18.95 19.66 18.73L21.66 15.27C21.78 15.05 21.73 14.78 21.54 14.63L19.43 12.98Z" 
+                            stroke="white" stroke-width="2"/>
+<                           /svg>`   
+        optbtn.style.transform = 'rotate(90deg) scale(1)'
+
     }
 }
 
@@ -341,7 +359,7 @@ function animate(timestamp) {
     const x = Math.sin(elapsed * 1.2) * 4; // trái phải
     const y = Math.cos(elapsed * 1.5) * 4; // lên xuống
     const rotation = Math.sin(elapsed * 0.8) * 0.7; // xoay
-    
+
 
     image.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
 
