@@ -140,29 +140,8 @@ const weathericon = document.querySelector('.icon')
 const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
 const weather_input = document.getElementById('weather-input')
-const weatherDescMap = {
-    "Sunny": "Trời nắng",
-    "Clear": "Trời quang đãng",
-    "Partly cloudy": "Ít mây",
-    "Cloudy": "Nhiều mây",
-    "Overcast": "Mây đen u ám",
-    "Light rain": "Mưa nhỏ",
-    "Heavy rain": "Mưa lớn",
-    "Fog": "Sương mù",
-    "Patchy rain nearby": "Mưa rào rải rác",
-};
+const weather_error = document.getElementById('weather-error')
 
-const weatherIconMap = {
-    "Sunny": "01d_t@2x.png",
-    "Clear": "01d_t@2x.png",
-    "Partly cloudy": "02d_t@2x.png",
-    "Cloudy": "03d_t@2x.png",
-    "Overcast": "04d_t@2x.png",
-    "Light rain": "10d_t@2x.png",
-    "Heavy rain": "09d_t@2x.png",
-    "Fog": "50d_t@2x.png",
-    "Patchy rain nearby": "09d_t@2x.png"
-};
 
 weather_input.addEventListener('change', () => {
     if (weather_input.value == '') {
@@ -171,32 +150,31 @@ weather_input.addEventListener('change', () => {
     getWeather(weather_input.value)
 })
 
-function getWeather(city) {
-    fetch(`https://wttr.in/${city}?format=j1`)
-        .then(response => response.text())
-        .then(data => {
-            data = JSON.parse(data)
-            let desc = data.current_condition[0].weatherDesc[0].value
-            let descVN = weatherDescMap[desc] || desc;
-            let iconMap = weatherIconMap[desc] || desc;
-            let icon = './image/weather/' + iconMap
-            weathertext.innerText = data.nearest_area[0].areaName[0].value + ', ' + data.nearest_area[0].country[0].value + '\n' + descVN + ', cảm giác như ' + data.current_condition[0].FeelsLikeC + '°C'
-            temp.innerText = data.current_condition[0].temp_C + '°C'
-            weathericon.style.backgroundImage = `url(${icon})`
+async function getWeather(city) {
+    try {
+        const response = await fetch('https://memaybeo.thanhlaphuc2007.workers.dev/?q=' + city)
+        const data = await response.json()
+        let desc = data.weather[0].description
+        let icon = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+        temp.innerText = Math.round(data.main.temp) + '°C'
+        weathertext.innerText = data.name + '\n' + desc + ', cảm giác như ' + Math.round(data.main.feels_like) + '°C'
+        weathericon.style.backgroundImage = `url(${icon})`
 
-            // Save to cache
-            cache.weather_cache = {
-                "weather": weathertext.innerText,
-                "temp": temp.innerText,
-                "icon": icon
-            }
-            cache.cache = day().day
-            localStorage.setItem('cache', JSON.stringify(cache))
-            nunar()
+        // Save to cache
+        cache.weather_cache = {
+            "weather": weathertext.innerText,
+            "temp": temp.innerText,
+            "icon": icon
         }
-        )
-}
+        cache.cache = day().day
+        localStorage.setItem('cache', JSON.stringify(cache))
+        weather_error.style.display = 'none'
+        nunar()
 
+    } catch (error) {
+        weather_error.style.display = 'block'
+    }
+}
 
 // Search stuff -------------------------------------------------------
 const searchbox = document.getElementById('search')
@@ -220,7 +198,7 @@ searchbox.addEventListener('keypress', () => {
     if (searchbox.value.length >= 0) {
         focusonsearch()
     }
-    if (event.key === 'Enter') {
+    if (event.key == 'Enter') {
         window.open(`https://www.google.com/search?q=${searchbox.value}`, "_self")
     }
 })
@@ -292,7 +270,7 @@ function checkSettingState() {
                             stroke="white" stroke-width="2"/>
                             <path d="M19.43 12.98C19.47 12.66 19.5 12.33 19.5 12C19.5 11.67 19.47 11.34 19.43 11.02L21.54 9.37C21.73 9.22 21.78 8.95 21.66 8.73L19.66 5.27C19.54 5.05 19.28 4.97 19.06 5.06L16.56 6.06C16.04 5.65 15.47 5.31 14.85 5.06L14.5 2.39C14.47 2.17 14.28 2 14.05 2H9.95C9.72 2 9.53 2.17 9.5 2.39L9.15 5.06C8.53 5.31 7.96 5.65 7.44 6.06L4.94 5.06C4.72 4.97 4.46 5.05 4.34 5.27L2.34 8.73C2.22 8.95 2.27 9.22 2.46 9.37L4.57 11.02C4.53 11.34 4.5 11.67 4.5 12C4.5 12.33 4.53 12.66 4.57 12.98L2.46 14.63C2.27 14.78 2.22 15.05 2.34 15.27L4.34 18.73C4.46 18.95 4.72 19.03 4.94 18.94L7.44 17.94C7.96 18.35 8.53 18.69 9.15 18.94L9.5 21.61C9.53 21.83 9.72 22 9.95 22H14.05C14.28 22 14.47 21.83 14.5 21.61L14.85 18.94C15.47 18.69 16.04 18.35 16.56 17.94L19.06 18.94C19.28 19.03 19.54 18.95 19.66 18.73L21.66 15.27C21.78 15.05 21.73 14.78 21.54 14.63L19.43 12.98Z" 
                             stroke="white" stroke-width="2"/>
-<                           /svg>`   
+                            </svg>`
         optbtn.style.transform = 'rotate(90deg) scale(1)'
 
     }
