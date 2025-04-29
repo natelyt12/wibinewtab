@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Wibi New Tab",
-    "version": "1.8.2",
-    "description": "Trang tab mới tùy chỉnh",
+    "name": "Wibi",
+    "version": "2.0",
+    "description": "Minimalism in motion.",
     "author": "Phúc Thanhh",
     "chrome_url_overrides": {
         "newtab": "index.html"
@@ -10,5 +10,10 @@
     "permissions": [
         "storage",
         "unlimitedStorage"
-    ]
+    ],
+    "icons": {
+        "16": "icons/icon-16.png",
+        "48": "icons/icon-48.png",
+        "128": "icons/icon-128.png"
+    }
 }

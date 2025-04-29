@@ -7,40 +7,36 @@
     <title>Tab mới</title>
     <link rel="stylesheet" href="style.css">
     <!-- font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <link rel="icon" href="./image/traveller.png">
+    <link rel="icon" href="/icons/icon-48.png">
     <!-- font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@450&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div class="bg-img">
-        <div class="background_blur"></div>
         <div class="wavy-image">
             <div class="image"></div>
+            <div class="overlay"></div>
         </div>
-        <div class="loader">
-            <svg viewBox="25 25 50 50" class="circular">
-                <circle stroke-miterlimit="10" stroke-width="3" fill="none" r="20" cy="50" cx="50" class="path">
-                </circle>
-            </svg>
+        <div class="safemode-box">
+            <p>Safe mode đang bật</p>
         </div>
         <div class="content">
             <div class="date-info">
                 <p class="clock">--</p>
-                <p class="date"><span id="calendar">--</span><br><span id="lunar-calendar">--</span></p>
+                <p class="date"><span id="calendar"></span><br><span id="lunar-calendar">Đang lấy dữ liệu...</span></p>
             </div>
             <div class="weather-info">
                 <div class="icon-container">
                     <div class="icon"></div>
                     <p class="temp">__</p>
                 </div>
-                <p class="weather">Fetching...</p>
+                <p class="weather">Đang lấy dữ liệu...</p>
             </div>
             <div class="search">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -58,9 +54,7 @@
                 </button>
             </div>
         </div>
-        <div class="safemode-box">
-            <p>Safe mode đang bật</p>
-        </div>
+        
     </div>
 
     <div class="opt-btn-con">
@@ -99,11 +93,8 @@
 
         <!-- new tab -->
         <div class="API-handle setting-tabs">
-            <div class="tab-title">Hình nền</div>
+            <div class="tab-title">Nguồn ảnh</div>
             <div class="tab-content">
-                <img class="preview-image" draggable="false">
-                <hr style="padding: 0;margin: 5px 0;border:1px solid rgba(255, 255, 255, 0.3);">
-                </hr>
                 <div class="select-API">
                     <button class="choose-API">
                         <p class="API-name">Chọn nguồn ảnh</p>
@@ -144,9 +135,8 @@
                     <label for="opacity-slider">Độ sáng: <span id="opacity-value">100%</span></label>
                     <input type="range" id="opacity-slider" min="20" max="100" value="100">
                     <!-- Bg position -->
-                    <label for="bgpos-slider">Căn chỉnh Y: <span id="bgpos-value">0%</span></label>
+                    <label for="bgpos-slider">Y: <span id="bgpos-value">0%</span><button id="bgpos-center">Căn giữa</button></label>
                     <input type="range" id="bgpos-slider" min="0" max="100" value="50">
-                    <button id="bgpos-center">Căn giữa</button>
                 </div>
                 <!-- Fullscreen -->
                 <div class="checkbox">
@@ -206,7 +196,7 @@
                 <button class="del-local">Đặt lại</button>
                 <p class="tooltip">Đặt lại tất cả cài đặt về mặc định</p>
                 <button class="clear-cache">Fetch lại thông tin</button>
-                <p class="tooltip">Lấy lại thông tin tời tiết và Âm Lịch nếu có lỗi</p>
+                <p class="tooltip">Lấy lại thông tin thời tiết và Âm Lịch nếu có lỗi</p>
                 <p style="opacity: 0.5;font-size: 0.8em;margin: 0;padding: 0;">Cache day: <span
                         id="cache_status">NaN</span></p>
             </div>
@@ -234,5 +224,4 @@
 
 </body>
 <script src="script.js"></script>
-
 </html>

@@ -1,6 +1,4 @@
 // const
-const loader = document.querySelector('.loader');
-const bgimg = document.querySelector('.bg-img');
 const setting = document.querySelector('.settings');
 const image = document.querySelector('.image');
 const settingBtn = document.querySelector('.opt-btn');
@@ -12,7 +10,7 @@ const previewImage = document.querySelector('.preview-image');
 const date = document.getElementById('calendar');
 const lunar = document.getElementById('lunar-calendar');
 const clock = document.querySelector('.clock');
-const bgopt = document.querySelector('.bg-settings');
+const overlay = document.querySelector('.overlay');
 
 const bgposCenter = document.getElementById('bgpos-center');
 const safemode = document.getElementById('safemode');
@@ -32,13 +30,10 @@ const alertContent = document.getElementById('alert-content');
 const alertClose = document.querySelector('.alert-close');
 const alertProceed = document.querySelector('.alert-proceed');
 
-window.onerror = function (message, source, lineno, colno, error) {
+window.onerror = function (message, source, lineno, colno) {
     errorDisplay.style.display = 'block';
     errorText.innerText = `Error: ${message} at ${source}:${lineno}:${colno}`;
 };
-function triggerError(message) {
-    throw new Error(message);
-}
 
 function showalert(content) {
     alertContent.innerText = content;
@@ -48,25 +43,22 @@ function showalert(content) {
         alertBg.style.opacity = 1;
         alertBox.style.transform = 'translate(-50%, -50%) scale(1)';
     }, 10);
-
+    function closeAlert() {
+        alertBox.style.opacity = 0;
+        alertBox.style.transform = 'translate(-50%, -50%) scale(0.7)';
+        alertBg.style.opacity = 0;
+        setTimeout(() => {
+            alertBg.style.display = 'none';
+        }, 300);
+    }
     return new Promise((resolve) => {
         alertProceed.addEventListener('click', () => {
-            alertBox.style.opacity = 0;
-            alertBox.style.transform = 'translate(-50%, -50%) scale(0.7)';
-            alertBg.style.opacity = 0;
-            setTimeout(() => {
-                alertBg.style.display = 'none';
-            }, 300);
+            closeAlert();
             resolve(true);
         }, { once: true });
 
         alertClose.addEventListener('click', () => {
-            alertBox.style.opacity = 0;
-            alertBox.style.transform = 'translate(-50%, -50%) scale(0.7)';
-            alertBg.style.opacity = 0;
-            setTimeout(() => {
-                alertBg.style.display = 'none';
-            }, 300);
+            closeAlert();
             resolve(false);
         }, { once: true });
     });
@@ -89,8 +81,7 @@ function getClock() {
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
-    const time = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-    clock.innerText = time;
+    clock.innerText = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
     return {
         "hours": hours,
         "minutes": minutes
@@ -117,23 +108,20 @@ function day() {
 }
 
 // Lunar calendar
-function nunar() {
-    fetch('https://open.oapi.vn/date/convert-to-lunar', {
+async function nunar() {
+    const response = await fetch('https://open.oapi.vn/date/convert-to-lunar', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(day())
     })
-        .then(response => response.json())
-        .then(data => {
-            let d = data.data
-            lunar.innerText = `Âm lịch: ${d.day} tháng ${d.month} năm ${d.sexagenaryCycle}`
-            cache.lunar_cache = lunar.innerText
-            localStorage.setItem('cache', JSON.stringify(cache))
-        })
+    const data = await response.json()
+    let d = data.data
+    lunar.innerText = `Âm lịch: ${d.day} tháng ${d.month} năm ${d.sexagenaryCycle}`
+    cache.lunar_cache = lunar.innerText
+    localStorage.setItem('cache', JSON.stringify(cache))
 }
-
 
 // Weather stuff -------------------------------------------------------
 const weathericon = document.querySelector('.icon')
@@ -141,7 +129,6 @@ const weathertext = document.querySelector('.weather')
 const temp = document.querySelector('.temp')
 const weather_input = document.getElementById('weather-input')
 const weather_error = document.getElementById('weather-error')
-
 
 weather_input.addEventListener('change', () => {
     if (weather_input.value == '') {
@@ -181,18 +168,11 @@ const searchbox = document.getElementById('search')
 const searchcontainer = document.querySelector('.search')
 const clearsearch = document.getElementById('clear')
 function focusonsearch() {
-    searchbox.style.width = '500px'
-    searchbox.style.transition = '0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000)'
-    clearsearch.style.display = 'flex'
-    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Enter để tìm]'
-    searchbox.style.fontSize = '1.2em'
+    searchcontainer.classList.add('search-active')
 }
 function normsearchstate() {
-    searchbox.style.width = '230px';
-    document.getElementsByName('search')[0].placeholder = 'Tìm kiếm [Nhập bất kỳ]';
-    clearsearch.style.display = 'none'
     searchbox.blur()
-    searchbox.style.fontSize = '0.8em'
+    searchcontainer.classList.remove('search-active')
 }
 searchbox.addEventListener('keypress', () => {
     if (searchbox.value.length >= 0) {
@@ -229,7 +209,7 @@ document.addEventListener('keydown', (event) => {
         setting.classList.toggle('active');
         settingBtn.classList.toggle('active2');
         settingstate = !settingstate;
-        checkSettingState()
+        movetheoptbntn()
     } else if (event.ctrlKey && event.key === 'x') {
         safemode.checked = !safemode.checked;
         safemode.dispatchEvent(new Event('click'));
@@ -241,6 +221,7 @@ document.addEventListener('keydown', (event) => {
         setting.classList.remove('active');
         settingBtn.classList.remove('active2');
         settingstate = false;
+        movetheoptbntn()
     }
 });
 
@@ -248,12 +229,12 @@ settingBtn.addEventListener('click', () => {
     setting.classList.toggle('active');
     settingBtn.classList.toggle('active2');
     settingstate = !settingstate;
-    checkSettingState()
+    movetheoptbntn()
 });
 
 const optbtnCon = document.querySelector('.opt-btn-con');
 const optbtn = document.querySelector('.opt-btn');
-function checkSettingState() {
+function movetheoptbntn() {
     if (settingstate) {
         optbtnCon.style.transform = 'translateX(-240px)';
         optbtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -261,7 +242,7 @@ function checkSettingState() {
                         <line x1="4" y1="4" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round" />
                         <line x1="20" y1="4" x2="4" y2="20" stroke="white" stroke-width="2" stroke-linecap="round" />
                         </svg>`
-        optbtn.style.transform = 'rotate(-90deg) scale(0.8)'
+        optbtn.style.transform = 'rotate(-180deg) scale(0.8)'
     } else {
         optbtnCon.style.transform = 'translateX(0)';
         optbtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" 
@@ -272,20 +253,22 @@ function checkSettingState() {
                             stroke="white" stroke-width="2"/>
                             </svg>`
         optbtn.style.transform = 'rotate(90deg) scale(1)'
-
     }
 }
 
 // Settings items -------------------------------------------------------
 // Tab title
-const tabtitle = document.getElementById('new-tab-title');
-tabtitle.addEventListener('change', () => {
+function checktabname() {
     if (tabtitle.value != '') {
         document.title = tabtitle.value;
     } else {
         document.title = 'Tab mới';
     }
     tabtitle.blur()
+}
+const tabtitle = document.getElementById('new-tab-title');
+tabtitle.addEventListener('change', () => {
+    checktabname()
 });
 
 // Opacity
@@ -308,27 +291,24 @@ bgposCenter.addEventListener('click', () => {
     bgposSlider.dispatchEvent(new Event('input'));
 });
 
-// Full view
-const movebgtoggle = document.querySelector('.movebgtoggle');
+// Wavy background
 const sliderbox = document.querySelector('.slider');
-const wavybg = document.querySelector('.wavy-image');
 function checkwavy() {
     if (wavy.checked) {
-        startWavy()
+        startwave()
     } else {
-        pauseWavy()
+        pausewave()
     }
 }
 wavy.addEventListener('click', () => {
     checkwavy()
 })
 
-// Wavy backround
 let start = null;
 let animationId = null;
 let isPaused = false;
 
-function animate(timestamp) {
+function wave(timestamp) {
     if (isPaused) return; // nếu pause thì không chạy nữa
 
     if (!start) start = timestamp;
@@ -337,20 +317,17 @@ function animate(timestamp) {
     const x = Math.sin(elapsed * 1.2) * 4; // trái phải
     const y = Math.cos(elapsed * 1.5) * 4; // lên xuống
     const rotation = Math.sin(elapsed * 0.8) * 0.7; // xoay
-
-
     image.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
-
-    animationId = requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(wave);
 }
 
-function startWavy() {
+function startwave() {
     isPaused = false;
     start = null;
-    requestAnimationFrame(animate);
+    requestAnimationFrame(wave);
 }
 
-function pauseWavy() {
+function pausewave() {
     isPaused = true;
     cancelAnimationFrame(animationId);
     image.style.transform = 'translate(-0%, -0%) rotate(0deg)'; // Đặt lại transform về trạng thái ban đầu
@@ -417,21 +394,20 @@ chrome.storage.local.get('imgdata', (data) => {
     if (data.imgdata == undefined) {
         API_name.innerText = 'Không có';
         closeall()
-        loader.style.opacity = 0;
     } else {
+        setTimeout(() => {
+            overlay.style.opacity = 0
+            image.style.display = 'block'
+        }, 500);
         let parseddata = JSON.parse(data.imgdata);
         API_name.innerText = parseddata.API_name;
         let a = '.' + parseddata.API_class
         let api_element = document.querySelector(a)
         api_element.classList.toggle('shown')
         loadImage();
-        if (parseddata.url == '') {
-            loader.style.opacity = 0;
-        }
     }
 });
 
-const API_arrow = document.querySelector('.API-arrow');
 choose_API.addEventListener('click', () => {
     API_select_box.classList.toggle('shown');
 })
@@ -449,12 +425,9 @@ api_none.addEventListener('click', () => {
     previewImage.style.display = 'none'
     API_select_box.classList.remove('shown');
     closeall()
-    image.style.opacity = 0;
-    // Đợi fadeout hết
     setTimeout(() => {
         image.style.backgroundImage = 'none';
     }, 1000);
-    loader.style.opacity = 0;
     chrome.storage.local.remove('imgdata');
 });
 
@@ -479,9 +452,9 @@ document.getElementById("pick-image").addEventListener("click", function () {
 
 // Select: Picsum Photos
 api_picsum.addEventListener('click', () => {
+    closeall()
     API_name.innerText = api_picsum.innerText;
     API_select_box.classList.remove('shown');
-    closeall()
     picsum_box.classList.toggle('shown');
     picsum_fetch();
 });
@@ -500,22 +473,25 @@ picsum_download.addEventListener('click', () => {
 });
 
 document.getElementById("fileInput").addEventListener("change", function (event) {
-    let file = event.target.files[0];
-    if (file) {
-        let reader = new FileReader();
-        reader.onload = function (e) {
-            chrome.storage.local.get('imgdata', (data) => {
-                let imgdata = {
-                    "API_name": "Hình nền cục bộ",
-                    "API_class": "localimage",
-                    "url": e.target.result
-                }
-                chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
-                loadImage();
-            })
-        };
-        reader.readAsDataURL(file); // Chuyển file thành Base64 để hiển thị
-    }
+    overlay.style.opacity = 1
+    setTimeout(() => {
+        let file = event.target.files[0];
+        if (file) {
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                chrome.storage.local.get('imgdata', () => {
+                    let imgdata = {
+                        "API_name": "Hình nền cục bộ",
+                        "API_class": "localimage",
+                        "url": e.target.result
+                    }
+                    chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
+                    loadImage();
+                })
+            };
+            reader.readAsDataURL(file); // Chuyển file thành Base64 để hiển thị
+        }
+    }, 500);
 });
 
 // Select: Picrew
@@ -535,7 +511,6 @@ api_picrew.addEventListener('click', async () => {
 // Picrew options
 picre_changewall.addEventListener('click', () => {
     picre_changewall.innerText = 'Đang đổi hình nền...';
-    loader.style.opacity = 1
     picrew_fetch();
 })
 picre_download.addEventListener('click', () => {
@@ -553,10 +528,10 @@ picre_pixiv.addEventListener('click', () => {
 
 // Lorem Picsum: Fetch
 function picsum_fetch() {
-    apihandle.style.opacity = 0.5
+    overlay.style.opacity = 1
+    apihandle.style.opacity = 0.77
     sliderbox.style.opacity = 0.5
     sliderbox.style.pointerEvents = 'none'
-    loader.style.opacity = 1
     picsum_changewall.innerText = 'Đang đổi hình nền...';
     apihandle.style.pointerEvents = 'none'
     fetch('https://picsum.photos/2560/1440.webp')
@@ -580,7 +555,8 @@ function picsum_fetch() {
 
 // Picrew: Fetch
 function picrew_fetch() {
-    apihandle.style.opacity = 0.5
+    overlay.style.opacity = 1
+    apihandle.style.opacity = 0.77
     apihandle.style.pointerEvents = 'none'
     sliderbox.style.opacity = 0.5
     sliderbox.style.pointerEvents = 'none'
@@ -588,7 +564,6 @@ function picrew_fetch() {
     fetch('https://pic.re/image.json')
         .then(response => response.json())
         .then(data => {
-            loader.style.opacity = 1
             let imgurl = 'https://' + data.file_url
             compressImageFromURL(imgurl, 0.8, (compressedBase64) => {
                 let imgdata = {
@@ -611,31 +586,24 @@ function loadImage() {
     chrome.storage.local.get('imgdata', (data) => {
         data = JSON.parse(data.imgdata);
         let img = new Image();
+        img.src = data.url
         img.onload = function () {
             image.style.backgroundImage = 'url(' + img.src + ')';
-            loader.style.opacity = 0;
-            image.style.opacity = opacitySlider.value / 100;
         };
-        img.src = data.url
-        previewImage.src = data.url
-        previewImage.style.display = 'block'
 
         // pic.re
-        if (data.API_name == 'Picre') {
+        if (data.API_name == 'Picre' || data.API_name == 'Lorem Picsum') {
             apihandle.style.opacity = 1
             apihandle.style.pointerEvents = 'auto'
             sliderbox.style.opacity = 1
             sliderbox.style.pointerEvents = 'auto'
             picre_changewall.innerText = 'Đổi hình nền';
-        }
-        // Picsum
-        if (data.API_name == 'Lorem Picsum') {
-            apihandle.style.opacity = 1
-            apihandle.style.pointerEvents = 'auto'
-            sliderbox.style.opacity = 1
-            sliderbox.style.pointerEvents = 'auto'
             picsum_changewall.innerText = 'Đổi hình nền';
         }
+
+        setTimeout(() => {
+            overlay.style.opacity = 0
+        }, 800);
     });
 
 }
@@ -673,7 +641,6 @@ function compressImageFromURL(imageUrl, quality = 0.8, callback) {
         console.error("Không thể tải ảnh:", imageUrl);
     };
 }
-
 // Save and Load settings ----------------------------------------------------------
 function saveSettings() {
     const settings = {
@@ -686,7 +653,6 @@ function saveSettings() {
     };
     localStorage.setItem('settings', JSON.stringify(settings));
 }
-
 
 if (localStorage.getItem('settings') == null) {
     saveSettings()
@@ -718,11 +684,7 @@ function loadSettings() {
         bgposText.innerText = bgposSlider.value + '%';
         checkwavy()
         safemodebg()
-        if (tabtitle.value != '') {
-            document.title = tabtitle.value;
-        } else {
-            document.title = 'Tab mới';
-        }
+        checktabname()
     }
 }
 

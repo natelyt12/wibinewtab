@@ -1,5 +1,5 @@
 * {
-    font-family: 'Saira', serif;
+    font-family: 'Quicksand', serif;
     font-style: normal;
     user-select: none;
     box-sizing: border-box;
@@ -8,7 +8,6 @@
 
 body {
     background-color: #000;
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -20,20 +19,15 @@ button {
     border: none;
     color: white;
     transition: 0.1s;
-    padding: 5px 8px;
+    padding: 6px 8px;
     margin: 2px 0;
     width: 100%;
     text-decoration: none;
     cursor: pointer;
-    border-radius: 5px;
-}
-
-.API-option {
-    border-radius: 0px;
 }
 
 button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 button:active {
@@ -51,9 +45,13 @@ input[type="text"] {
     color: white;
     padding: 5px 8px;
     margin: 2px 0;
-    border-radius: 5px;
     font-size: 0.9em;
     outline: none;
+    transition: 0.1s;
+}
+
+input[type="text"]:focus {
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 input[type="range"] {
@@ -68,39 +66,8 @@ input[type="range"]:hover {
     cursor: pointer;
 }
 
-svg{
+svg {
     transition: 0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000);
-}
-
-/* From Uiverse.io by satyamchaudharydev */
-.loader {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.5);
-    width: 60px;
-    transition: 0.5s;
-    background-color: #00000060;
-    border-radius: 50%;
-}
-
-.loader:before {
-    content: "";
-    display: block;
-    padding-top: 100%;
-}
-
-.circular {
-    animation: rotate73451 2s linear infinite;
-    height: 100%;
-    transform-origin: center center;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
 }
 
 .path {
@@ -109,29 +76,6 @@ svg{
     animation: dash0175 1.5s ease-in-out infinite;
     stroke-linecap: round;
     stroke: white
-}
-
-@keyframes rotate73451 {
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes dash0175 {
-    0% {
-        stroke-dasharray: 1, 200;
-        stroke-dashoffset: 0;
-    }
-
-    50% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -35px;
-    }
-
-    100% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -124px;
-    }
 }
 
 /* From Uiverse.io by mrhyddenn */
@@ -219,12 +163,13 @@ svg{
     background-size: cover;
     background-position: center;
     background-color: transparent;
-    transition: all 1.5s cubic-bezier(0.190, 1.000, 0.220, 1.000);
     opacity: 0;
+    transition: 0.8s cubic-bezier(0.190, 1.000, 0.220, 1.000);
     filter: blur(0px);
+    display: none;
 }
 
-.wavy-image{
+.wavy-image {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -255,10 +200,9 @@ svg{
     display: flex;
     flex-direction: column;
     visibility: hidden;
-    border-radius: 8px;
 }
 
-.settings::-webkit-scrollbar{
+.settings::-webkit-scrollbar {
     width: 0;
 }
 
@@ -283,13 +227,8 @@ svg{
 }
 
 .opt-btn:hover {
-    background-color: rgba(0, 0, 0, 0.7);
-    opacity: 1;
-}
-
-.opt-btn:active {
-    transform: scale(0.9);
-    transition: 0s !important;
+    background-color: black;
+    opacity: 0.8;
 }
 
 .active {
@@ -301,22 +240,20 @@ svg{
     opacity: 1;
 }
 
-.opt-btn-con{
+.opt-btn-con {
     transition: 0.8s cubic-bezier(0.190, 1.000, 0.220, 1.000);
 }
 
 .tab-title {
     font-size: 1em;
     text-align: center;
-    padding: 3px 0;
+    padding: 5px 0;
     background-color: black;
-    border-radius: 8px 8px 0 0;
 }
 
 .setting-tabs {
-    margin: 3px 0;
+    margin: 2px 0;
     background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 8px;
 }
 
 .tab-content {
@@ -416,16 +353,7 @@ svg{
 }
 
 .preview-image {
-    border-radius: 4px;
     display: none;
-}
-
-.content p,
-span {
-    font-family: "Lexend", serif !important;
-    font-optical-sizing: auto !important;
-    font-weight: 300;
-    font-style: normal !important;
 }
 
 .date-info {
@@ -579,6 +507,7 @@ span {
     width: 230px;
     transition: 0.5s;
     font-size: .8em;
+    transition: 0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000);
 }
 
 #search-btn {
@@ -594,15 +523,15 @@ span {
 
 #clear {
     background: transparent;
-    width: 40px;
-    height: 40px;
+    width: 25px;
+    height: 25px;
     display: none;
     justify-content: center;
     align-items: center;
 }
 
-#clear:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+#clear svg {
+    scale: 2.5;
 }
 
 .icon {
@@ -645,15 +574,16 @@ span {
     display: none;
 }
 
+.picsum {
+    display: none;
+}
+
 hr {
     border: 0;
     height: 1px;
     background: rgba(255, 255, 255, 0.5);
     margin: 5px 0;
-}
-
-.picsum {
-    display: none;
+    opacity: 0.4;
 }
 
 .alert-box-bg {
@@ -682,7 +612,6 @@ hr {
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
     transition: 0.5s cubic-bezier(0.230, 1.000, 0.320, 1.000);
-    border-radius: 5px;
 }
 
 .alert-title {
@@ -691,10 +620,9 @@ hr {
     margin: 0;
     padding: 0;
     background-color: #000;
-    border-radius: 5px 5px 0 0;
 }
 
-.alert-content{
+.alert-content {
     margin: 0px 8px 8px 8px;
 }
 
@@ -709,23 +637,19 @@ hr {
     padding: 0;
 }
 
-hr{
-    opacity: 0.5;
-}
-
-.slider{
+.slider {
     display: flex;
     flex-direction: column;
 }
 
-.tooltip{
+.tooltip {
     opacity: 0.5;
     font-size: 0.8em;
     padding: 0;
     margin: 0;
 }
 
-#weather-error{
+#weather-error {
     font-size: 0.8em;
     width: 100%;
     text-align: center;
@@ -733,4 +657,29 @@ hr{
     margin: 0;
     color: rgb(255, 92, 74);
     display: none;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    transition: 1s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+}
+
+#bgpos-center {
+    width: auto;
+    padding: 2px 8px;
+    margin-left: 5px;
+}
+
+.search-active #search {
+    font-size: 1.2em;
+    width: 500px;
+}
+
+.search-active #clear {
+    display: flex;
 }
