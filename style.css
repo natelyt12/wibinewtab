@@ -7,7 +7,7 @@
 }
 
 body {
-    background-color: #000;
+    background-color: #000000;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -163,10 +163,7 @@ svg {
     background-size: cover;
     background-position: center;
     background-color: transparent;
-    opacity: 0;
     transition: 0.8s cubic-bezier(0.190, 1.000, 0.220, 1.000);
-    filter: blur(0px);
-    display: none;
 }
 
 .wavy-image {
@@ -177,6 +174,17 @@ svg {
     width: 104%;
     height: 104vh;
     will-change: transfrom;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0, 0, 0);
+    transition: 0.8s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+    opacity: 1;
 }
 
 .settings {
@@ -286,10 +294,6 @@ svg {
     overflow: auto;
 }
 
-.shown {
-    display: block !important;
-}
-
 .picre {
     display: none;
 }
@@ -318,12 +322,13 @@ svg {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(40px);
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(100px);
     width: 100%;
     height: 100vh;
     z-index: 3;
-    display: none;
+    transition: 500ms cubic-bezier(0.190, 1.000, 0.220, 1.000);
+    transform: scaleY(0);
 }
 
 .safemode-box p {
@@ -337,9 +342,13 @@ svg {
     transform: translateX(-50%);
 }
 
+.shown {
+    transform: scaleY(1);
+}
+
 .error-display {
     display: none;
-    background-color: rgb(141, 0, 0);
+    background-color: rgb(141, 0, 0, 0.8);
 }
 
 #error-text {
@@ -350,6 +359,17 @@ svg {
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
+    font-family: monospace, 'Courier New', Courier;
+    user-select: text;
+}
+
+#error-text::selection{
+    color: white;
+    background-color: black;
+}
+
+.select-API{
+    margin-bottom: 5px;
 }
 
 .preview-image {
@@ -657,16 +677,6 @@ hr {
     margin: 0;
     color: rgb(255, 92, 74);
     display: none;
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    transition: 1s cubic-bezier(0.190, 1.000, 0.220, 1.000);
 }
 
 #bgpos-center {

@@ -213,7 +213,7 @@ document.addEventListener('keydown', (event) => {
     } else if (event.ctrlKey && event.key === 'x') {
         safemode.checked = !safemode.checked;
         safemode.dispatchEvent(new Event('click'));
-    } else if (event.key.length === 1 && !event.ctrlKey) {
+    } else if (/^[a-zA-Z0-9]$/.test(event.key) && !event.ctrlKey) {
         if (settingstate == false) {
             searchbox.focus();
         }
@@ -395,10 +395,6 @@ chrome.storage.local.get('imgdata', (data) => {
         API_name.innerText = 'Không có';
         closeall()
     } else {
-        setTimeout(() => {
-            overlay.style.opacity = 0
-            image.style.display = 'block'
-        }, 500);
         let parseddata = JSON.parse(data.imgdata);
         API_name.innerText = parseddata.API_name;
         let a = '.' + parseddata.API_class
@@ -422,12 +418,10 @@ function closeall() {
 // Select: No API
 api_none.addEventListener('click', () => {
     API_name.innerText = 'Không có';
-    previewImage.style.display = 'none'
     API_select_box.classList.remove('shown');
     closeall()
-    setTimeout(() => {
-        image.style.backgroundImage = 'none';
-    }, 1000);
+    overlay.style.opacity = 1
+    setTimeout(() => { image.style.backgroundImage = 'none'; }, 800);
     chrome.storage.local.remove('imgdata');
 });
 
@@ -527,58 +521,59 @@ picre_pixiv.addEventListener('click', () => {
 })
 
 // Lorem Picsum: Fetch
-function picsum_fetch() {
+async function picsum_fetch() {
     overlay.style.opacity = 1
     apihandle.style.opacity = 0.77
     sliderbox.style.opacity = 0.5
     sliderbox.style.pointerEvents = 'none'
     picsum_changewall.innerText = 'Đang đổi hình nền...';
     apihandle.style.pointerEvents = 'none'
-    fetch('https://picsum.photos/2560/1440.webp')
-        .then(response => response.blob())
-        .then(blob => {
-            let reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = function () {
-                let imgdata = {
-                    "API_name": "Lorem Picsum",
-                    "API_class": "picsum",
-                    "url": reader.result
-                }
-                chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
-                setTimeout(() => {
-                    loadImage()
-                }, 500);
+    try {
+        const response = await fetch('https://picsum.photos/2560/1440.webp')
+        const blob = await response.blob();
+        let reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+            let imgdata = {
+                "API_name": "Lorem Picsum",
+                "API_class": "picsum",
+                "url": reader.result
             }
-        })
+            chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
+            setTimeout(loadImage, 500);
+        }
+    } catch (error) {
+        console.error('Error fetching image:', error);
+    }
 }
 
 // Picrew: Fetch
-function picrew_fetch() {
+async function picrew_fetch() {
     overlay.style.opacity = 1
     apihandle.style.opacity = 0.77
     apihandle.style.pointerEvents = 'none'
     sliderbox.style.opacity = 0.5
     sliderbox.style.pointerEvents = 'none'
     picre_changewall.innerText = 'Đang đổi hình nền...';
-    fetch('https://pic.re/image.json')
-        .then(response => response.json())
-        .then(data => {
-            let imgurl = 'https://' + data.file_url
-            compressImageFromURL(imgurl, 0.8, (compressedBase64) => {
-                let imgdata = {
-                    "API_name": "Picre",
-                    "API_class": "picre",
-                    "url": compressedBase64,
-                    "cdnurl": imgurl,
-                    "pixiv": data.source
-                }
-                chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
-                setTimeout(() => {
-                    loadImage()
-                }, 500);
-            })
-        })
+    // fetch('https://pic.re/image.json')
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         })
+    //     })
+    const response = await fetch('https://pic.re/image.json')
+    const data = await response.json()
+    let imgurl = 'https://' + data.file_url
+    compressImageFromURL(imgurl, 0.8, (compressedBase64) => {
+        let imgdata = {
+            "API_name": "Picre",
+            "API_class": "picre",
+            "url": compressedBase64,
+            "cdnurl": imgurl,
+            "pixiv": data.source
+        }
+        chrome.storage.local.set({ imgdata: JSON.stringify(imgdata) });
+        setTimeout(loadImage, 500);
+    })
 }
 
 // Load background image
@@ -589,23 +584,20 @@ function loadImage() {
         img.src = data.url
         img.onload = function () {
             image.style.backgroundImage = 'url(' + img.src + ')';
+            setTimeout(() => {
+                overlay.style.opacity = 0
+                
+                if (data.API_name == 'Picre' || data.API_name == 'Lorem Picsum') {
+                    apihandle.style.opacity = 1
+                    apihandle.style.pointerEvents = 'auto'
+                    sliderbox.style.opacity = 1
+                    sliderbox.style.pointerEvents = 'auto'
+                    picre_changewall.innerText = 'Đổi hình nền';
+                    picsum_changewall.innerText = 'Đổi hình nền';
+                }
+            }, 800)
         };
-
-        // pic.re
-        if (data.API_name == 'Picre' || data.API_name == 'Lorem Picsum') {
-            apihandle.style.opacity = 1
-            apihandle.style.pointerEvents = 'auto'
-            sliderbox.style.opacity = 1
-            sliderbox.style.pointerEvents = 'auto'
-            picre_changewall.innerText = 'Đổi hình nền';
-            picsum_changewall.innerText = 'Đổi hình nền';
-        }
-
-        setTimeout(() => {
-            overlay.style.opacity = 0
-        }, 800);
     });
-
 }
 
 // Covert to Webp
