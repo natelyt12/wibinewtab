@@ -74,7 +74,7 @@ if (localStorage.getItem('cache') == null) {
     localStorage.setItem('cache', JSON.stringify(cache))
 }
 const cache = JSON.parse(localStorage.getItem('cache'))
-document.getElementById('cache_status').innerText = `${day().day}`
+document.getElementById('cache_status').innerText = `Lần tiếp theo: ${cache.cache + 1}h`
 
 // Time stuff -------------------------------------------------------
 function getClock() {
@@ -88,6 +88,7 @@ function getClock() {
     }
 }
 getClock()
+day()
 setInterval(getClock, 5000);
 
 function day() {
@@ -95,15 +96,12 @@ function day() {
     const day = today.getDate();
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
-    const fullDate = today.toLocaleDateString('vi-VN', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
-    lunarconvert = {
+    let lunarconvert = {
         "day": day,
         "month": month,
         "year": year
     }
-    date.innerText = fullDate;
+    date.innerText = `Ngày ${day} tháng ${month} năm ${year}`;
     return lunarconvert
 }
 
@@ -153,7 +151,7 @@ async function getWeather(city) {
             "temp": temp.innerText,
             "icon": icon
         }
-        cache.cache = day().day
+        cache.cache = getClock().hours
         localStorage.setItem('cache', JSON.stringify(cache))
         weather_error.style.display = 'none'
         nunar()
@@ -205,7 +203,7 @@ document.addEventListener('keydown', (event) => {
 
 // Hotkeys -------------------------------------------------------
 document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.key === 'z') {
+    if (event.ctrlKey && event.key === 'm') {
         setting.classList.toggle('active');
         settingBtn.classList.toggle('active2');
         settingstate = !settingstate;
@@ -257,6 +255,12 @@ function movetheoptbntn() {
 }
 
 // Settings items -------------------------------------------------------
+// no tab at all
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Tab') {
+        e.preventDefault();
+    }
+});
 // Tab title
 function checktabname() {
     if (tabtitle.value != '') {
@@ -337,9 +341,9 @@ function pausewave() {
 const safemodebox = document.querySelector('.safemode-box');
 function safemodebg() {
     if (safemode.checked) {
-        safemodebox.classList.toggle('shown');
+        safemodebox.classList.toggle('safemode-enabled');
     } else {
-        safemodebox.classList.remove('shown');
+        safemodebox.classList.remove('safemode-enabled');
     }
 }
 safemode.addEventListener('click', () => {
@@ -393,6 +397,7 @@ if (chrome.storage == undefined) {
 chrome.storage.local.get('imgdata', (data) => {
     if (data.imgdata == undefined) {
         API_name.innerText = 'Không có';
+        loader.style.display = 'none'        
         closeall()
     } else {
         let parseddata = JSON.parse(data.imgdata);
@@ -468,6 +473,7 @@ picsum_download.addEventListener('click', () => {
 
 document.getElementById("fileInput").addEventListener("change", function (event) {
     overlay.style.opacity = 1
+    handleDisable()
     setTimeout(() => {
         let file = event.target.files[0];
         if (file) {
@@ -523,11 +529,8 @@ picre_pixiv.addEventListener('click', () => {
 // Lorem Picsum: Fetch
 async function picsum_fetch() {
     overlay.style.opacity = 1
-    apihandle.style.opacity = 0.77
-    sliderbox.style.opacity = 0.5
-    sliderbox.style.pointerEvents = 'none'
+    handleDisable()
     picsum_changewall.innerText = 'Đang đổi hình nền...';
-    apihandle.style.pointerEvents = 'none'
     try {
         const response = await fetch('https://picsum.photos/2560/1440.webp')
         const blob = await response.blob();
@@ -550,16 +553,8 @@ async function picsum_fetch() {
 // Picrew: Fetch
 async function picrew_fetch() {
     overlay.style.opacity = 1
-    apihandle.style.opacity = 0.77
-    apihandle.style.pointerEvents = 'none'
-    sliderbox.style.opacity = 0.5
-    sliderbox.style.pointerEvents = 'none'
+    handleDisable()
     picre_changewall.innerText = 'Đang đổi hình nền...';
-    // fetch('https://pic.re/image.json')
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         })
-    //     })
     const response = await fetch('https://pic.re/image.json')
     const data = await response.json()
     let imgurl = 'https://' + data.file_url
@@ -587,17 +582,30 @@ function loadImage() {
             setTimeout(() => {
                 overlay.style.opacity = 0
                 
-                if (data.API_name == 'Picre' || data.API_name == 'Lorem Picsum') {
-                    apihandle.style.opacity = 1
-                    apihandle.style.pointerEvents = 'auto'
-                    sliderbox.style.opacity = 1
-                    sliderbox.style.pointerEvents = 'auto'
+                if (data.API_name == 'Picre' || data.API_name == 'Lorem Picsum' || data.API_name == 'Hình nền cục bộ') {
+                    handleEnable()
                     picre_changewall.innerText = 'Đổi hình nền';
                     picsum_changewall.innerText = 'Đổi hình nền';
                 }
             }, 800)
         };
     });
+}
+
+const loader = document.querySelector('.loader');
+function handleEnable() {
+    loader.style.display = 'none'
+    apihandle.style.opacity = 1
+    apihandle.style.pointerEvents = 'auto'
+    sliderbox.style.opacity = 1
+    sliderbox.style.pointerEvents = 'auto'
+}
+function handleDisable() {
+    loader.style.display = 'block'
+    apihandle.style.opacity = 0.77
+    apihandle.style.pointerEvents = 'none'
+    sliderbox.style.opacity = 0.5
+    sliderbox.style.pointerEvents = 'none'
 }
 
 // Covert to Webp
@@ -660,7 +668,7 @@ function loadSettings() {
         safemode.checked = settings.safemode;
         tabtitle.value = settings.tabTitle;
         weather_input.value = settings.location
-        if (cache.cache != day().day) {
+        if (cache.cache != getClock().hours) {
             getWeather(weather_input.value)
         } else {
             weathertext.innerText = cache.weather_cache.weather

@@ -94,6 +94,7 @@
         <!-- new tab -->
         <div class="API-handle setting-tabs">
             <div class="tab-title">Nguồn ảnh</div>
+            <div class="loader"></div>
             <div class="tab-content">
                 <div class="select-API">
                     <button class="choose-API">
@@ -196,8 +197,7 @@
                 <p class="tooltip">Đặt lại tất cả cài đặt về mặc định</p>
                 <button class="clear-cache">Fetch lại thông tin</button>
                 <p class="tooltip">Lấy lại thông tin thời tiết và Âm Lịch nếu có lỗi</p>
-                <p style="opacity: 0.5;font-size: 0.8em;margin: 0;padding: 0;">Cache day: <span
-                        id="cache_status">NaN</span></p>
+                <p id="cache_status" style="opacity: 0.5;font-size: 0.8em;margin: 0;padding: 0;"></p>
             </div>
         </div>
 
@@ -209,7 +209,7 @@
                 <p>Lấy cảm hứng từ Phigros UI, tối giản, giới thiệu hình nền.</p>
                 <hr>
                 <p>
-                    Ctrl + Z để mở/đóng menu
+                    Ctrl + M để mở/đóng menu
                 </p>
                 <hr>
                 <p>All the API used in this project: <br>
