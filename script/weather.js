@@ -35,6 +35,7 @@ export async function getWeather(city) {
                 "icon": icon
             }
             parsed.weather_cache = cache
+            parsed.cache = getClock().hours
             localStorage.setItem('cache', JSON.stringify(parsed))
             weather_error.style.display = 'none'
         } catch (error) {
