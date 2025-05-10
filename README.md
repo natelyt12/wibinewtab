@@ -1,8 +1,37 @@
-### Usage
-1) Download zip file về
-2) Giải nén
-3) vô chrome://extension
-4) Bật dev mode
-5) Tải gói tiện tích đã giải nén
-6) Bấm chọn folder vừa unzip
-7) enjoy
+# Wibi New Tab
+
+Wibi là một extension Chrome tùy chỉnh tab mới – dành cho những ai yêu thích anime aesthetic
+Dự án cá nhân, viết hoàn toàn bằng HTML, CSS, JavaScript thuần.
+Tập trung vào visual, hiệu ứng nhẹ nhàng, đơn giản và dễ dùng.
+
+## Tính năng
+
+- Những tính năng trông sẽ rất chill nếu đề cùng với nền Anime=))
+- Tùy biến cao, theme lấy cảm hứng từ UI của Phigros
+- Giao diện đơn giản, chỉ có hình nền của bạn nổi bật
+- Dành cho những ai muốn tab mới thật "nghệ" và chill
+- Tập trung tối ưu hiệu năng và trải nghiệm người dùng
+- Lịch âm
+- Weather forecast
+
+## Screenshot / Demo
+
+![Demo](./image/preview.mp4)
+![Demo](./image/preview.webp)
+![Demo](./image/previewsafemode.webp)
+
+## Usage
+
+1. Tải file `.zip` của dự án
+2. Giải nén ra một thư mục
+3. Mở Chrome và truy cập `chrome://extensions`
+4. Bật "Chế độ dành cho nhà phát triển" (Developer mode)
+5. Nhấn "Tải tiện ích đã giải nén"
+6. Chọn thư mục vừa giải nén
+7. Mở tab mới và tận hưởng
+
+## Khác
+
+- Project không sử dụng bất kỳ framework nào
+- Project này chỉ dành cho mục đích cá nhân, không dành cho mục đích thương mại
+- Email: nathanelytra2k7@gmail.com

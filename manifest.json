@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Wibi",
     "version": "2.0",
-    "description": "Minimalism in motion.",
+    "description": "Trang tab mới siêu chill",
     "author": "Phúc Thanhh",
     "chrome_url_overrides": {
         "newtab": "index.html"

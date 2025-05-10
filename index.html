@@ -54,7 +54,7 @@
                 </button>
             </div>
         </div>
-        
+
     </div>
 
     <div class="opt-btn-con">
@@ -67,7 +67,6 @@
                     d="M19.43 12.98C19.47 12.66 19.5 12.33 19.5 12C19.5 11.67 19.47 11.34 19.43 11.02L21.54 9.37C21.73 9.22 21.78 8.95 21.66 8.73L19.66 5.27C19.54 5.05 19.28 4.97 19.06 5.06L16.56 6.06C16.04 5.65 15.47 5.31 14.85 5.06L14.5 2.39C14.47 2.17 14.28 2 14.05 2H9.95C9.72 2 9.53 2.17 9.5 2.39L9.15 5.06C8.53 5.31 7.96 5.65 7.44 6.06L4.94 5.06C4.72 4.97 4.46 5.05 4.34 5.27L2.34 8.73C2.22 8.95 2.27 9.22 2.46 9.37L4.57 11.02C4.53 11.34 4.5 11.67 4.5 12C4.5 12.33 4.53 12.66 4.57 12.98L2.46 14.63C2.27 14.78 2.22 15.05 2.34 15.27L4.34 18.73C4.46 18.95 4.72 19.03 4.94 18.94L7.44 17.94C7.96 18.35 8.53 18.69 9.15 18.94L9.5 21.61C9.53 21.83 9.72 22 9.95 22H14.05C14.28 22 14.47 21.83 14.5 21.61L14.85 18.94C15.47 18.69 16.04 18.35 16.56 17.94L19.06 18.94C19.28 19.03 19.54 18.95 19.66 18.73L21.66 15.27C21.78 15.05 21.73 14.78 21.54 14.63L19.43 12.98Z"
                     stroke="white" stroke-width="2" />
             </svg>
-
         </button>
     </div>
 
@@ -132,15 +131,16 @@
             <div class="tab-content">
                 <div class="slider">
                     <!-- Brightness -->
-                    <label for="opacity-slider">Độ sáng: <span id="opacity-value">100%</span></label>
-                    <input type="range" id="opacity-slider" min="20" max="100" value="100">
+                    <label for="opacity">Độ sáng: <span id="opacity-value"></span></label>
+                    <input type="range" id="opacity" min="20" max="100" value="100" class="wibi-settings">
                     <!-- Bg position -->
-                    <label for="bgpos-slider">Y: <span id="bgpos-value">0%</span><button id="bgpos-center">Căn giữa</button></label>
-                    <input type="range" id="bgpos-slider" min="0" max="100" value="50">
+                    <label for="bgpos">Y: <span id="bgpos-value"></span><button id="bgpos-center">Căn
+                            giữa</button></label>
+                    <input type="range" id="bgpos" min="0" max="100" value="50" class="wibi-settings">
                 </div>
-                <!-- Fullscreen -->
+                <!-- Wavy -->
                 <div class="checkbox">
-                    <input type="checkbox" class="checksvg" id="wavy" style="display: none;">
+                    <input type="checkbox" class="checksvg wibi-settings" id="wavy" style="display: none;">
                     <label for="wavy" class="check">
                         <p style="padding: 0;margin: 0;">Wavy Animation</p>
                         <svg width="18px" height="18px" viewBox="0 0 18 18">
@@ -155,7 +155,7 @@
                     lag với máy yếu</p>
                 <!-- Censored -->
                 <div class="checkbox">
-                    <input type="checkbox" class="checksvg" id="safemode" style="display: none;">
+                    <input type="checkbox" class="checksvg wibi-settings" id="safemode" style="display: none;">
                     <label for="safemode" class="check">
                         <p style="padding: 0;margin: 0;">Safe mode <span style="opacity: 0.5; font-size: 0.8em;">Ctrl +
                                 X</span></p>
@@ -171,26 +171,43 @@
                     của mình khi đang trình chiếu</p>
             </div>
         </div>
-
+        <div class="ui-tab setting-tabs">
+            <div class="tab-title">Giao diện</div>
+            <div class="tab-content">
+                <div class="checkbox">
+                    <input type="checkbox" class="checksvg wibi-settings" id="lumina" style="display: none;">
+                    <label for="lumina" class="check">
+                        <p style="padding: 0;margin: 0;">Lumina UI (beta)</p>
+                        <svg width="18px" height="18px" viewBox="0 0 18 18">
+                            <path
+                                d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z">
+                            </path>
+                            <polyline points="1 9 7 14 15 4"></polyline>
+                        </svg>
+                    </label>
+                </div>
+                <p class="tooltip">Khám phá Lumina: Bật để trải nghiệm giao diện mới mẻ và đầy cảm hứng. Tắt để trở về
+                    giao diện mặc định</p>
+            </div>
+        </div>
         <div class="new-tab setting-tabs">
             <div class="tab-title">Tiêu đề Tab</div>
             <div class="tab-content">
-                <input type="text" id="new-tab-title" placeholder="Enter để lưu tiêu đề">
+                <input type="text" id="tabTitle" placeholder="Enter để lưu tiêu đề" class="wibi-settings">
                 <p class="tooltip">Tùy chỉnh tiêu đề ở trên thanh tab</p>
             </div>
         </div>
-
-        <div class="new-tab setting-tabs">
+        <div class="weather-tab setting-tabs">
             <div class="tab-title">Thời tiết</div>
             <div class="tab-content">
-                <input type="text" id="weather-input" placeholder="Enter để lưu địa điểm" value="Hà Nội">
+                <input type="text" id="location" placeholder="Enter để lưu địa điểm" value="Hà Nội"
+                    class="wibi-settings">
                 <p id="weather-error">Không thể lấy thông tin thời tiết</p>
                 <p class="tooltip">Nhập địa điểm của bạn ở đây để lấy dữ liệu thời tiết tại địa điểm đó. Địa điểm có thể
                     không chính xác</p>
             </div>
         </div>
-
-        <div class="setting-tabs">
+        <div class="debug setting-tabs">
             <div class="tab-title">Gỡ lỗi</div>
             <div class="tab-content">
                 <button class="del-local">Đặt lại</button>
@@ -200,11 +217,12 @@
                 <p id="cache_status" style="opacity: 0.5;font-size: 0.8em;margin: 0;padding: 0;"></p>
             </div>
         </div>
-
         <div class="info setting-tabs">
             <div class="tab-title">Info</div>
             <div class="tab-content">
-                <p style="font-size: 1.4em; width: 100%; text-align: center; font-family: Lexend, serif;">wibi New Tab <span id="version" style="font-size: 0.7em;"></span></p>
+                <p style="font-size: 1.4em; width: 100%; text-align: center; font-family: Lexend, serif;">wibi New Tab
+                    <span id="version" style="font-size: 0.7em;"></span>
+                </p>
                 <p style="width: 100%; text-align: center; font-style: italic;">By @Phucthanhh</p>
                 <p>Lấy cảm hứng từ Phigros UI, tối giản, giới thiệu hình nền.</p>
                 <hr>
@@ -222,5 +240,7 @@
     </div>
 
 </body>
-<script src="script.js"></script>
+<!-- Script -->
+<script type="module" src="main.js"></script>
+
 </html>
