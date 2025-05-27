@@ -1,6 +1,6 @@
 # Wibi New Tab
 
-Wibi là một extension Chrome tùy chỉnh tab mới – dành cho những ai yêu thích anime aesthetic.
+Wibi là một extension Chrome tùy chỉnh tab mới.
 Dự án cá nhân, viết hoàn toàn bằng HTML, CSS, JavaScript thuần.
 Tập trung vào visual, hiệu ứng nhẹ nhàng, đơn giản và dễ dùng.
 
